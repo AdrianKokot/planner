@@ -21,6 +21,18 @@
   box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
   border-radius: 3px;
 }
+
+.loader {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.8);
+  justify-content: center;
+  align-items: center;
+}
 </style>
 
 <template>
@@ -56,6 +68,9 @@
         <b-button type="submit" variant="primary" class="w-100" :disabled="$v.form.$invalid">Login</b-button>
       </b-form>
     </div>
+    <div class="loader" v-show="isPending">
+      <b-spinner label="Loading..." variant="primary"></b-spinner>
+    </div>
   </div>
 </template>
 
@@ -71,6 +86,7 @@ export default {
         email: "",
         password: "",
       },
+      isPending: false
     };
   },
   validations: {
@@ -101,6 +117,7 @@ export default {
       return this.$v.form[field].$dirty ? !this.$v.form[field][errorName] : null;
     },
     login () {
+      this.isPending = true;
       this.$store
         .dispatch('login', {
           email: this.form.email,
@@ -112,6 +129,9 @@ export default {
         .catch(err => {
           console.log(err)
         })
+        .finally(err => {
+          this.isPending = false;
+        });
     }
   },
 };
