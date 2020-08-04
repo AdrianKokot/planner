@@ -1,10 +1,5 @@
 <style lang="scss" scoped>
 @import 'resources/sass/_variables';
-.position-absolute {
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
 
 .form-control {
   border-width: 0 0 1px 0;
@@ -31,7 +26,7 @@
 <template>
   <div class="d-flex justify-content-center align-items-center w-100" style="min-height: 100vh">
     <div class="col-lg-6 col-md-10 bg-white p-5">
-      <h2 class="text-center pb-md-5 pt-md-3 font-weight-bold">Login</h2>
+      <h2 class="text-center pb-md-5 pt-md-3 font-weight-bold">Planner login</h2>
       <b-form @submit="onSubmit" class="px-md-5 pb-md-5">
         <b-form-group>
           <label for="email-input">Email address</label>
