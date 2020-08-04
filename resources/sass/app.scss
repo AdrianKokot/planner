@@ -6,5 +6,15 @@
 
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap');
+@import '~bootstrap-vue/src/index.scss';
+@import url('https://fonts.googleapis.com/css2?family=Nunito&display=swap');
 
+
+body > main#app {
+  min-height: 100vh;
+}
+
+body {
+  background: rgb(0,166,116);
+  background: linear-gradient(47deg, rgba(0,166,116,1) 27%, rgba(0,181,128,1) 58%, rgba(0,217,152,1) 100%);
+}
