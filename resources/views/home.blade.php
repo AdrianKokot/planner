@@ -2,6 +2,6 @@
 
 @section('content')
 
-<login-component></login-component>
+<router-view></router-view>
 
 @endsection

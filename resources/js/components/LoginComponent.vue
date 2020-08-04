@@ -27,7 +27,7 @@
   <div class="d-flex justify-content-center align-items-center w-100" style="min-height: 100vh">
     <div class="col-lg-6 col-md-10 bg-white p-5">
       <h2 class="text-center pb-md-5 pt-md-3 font-weight-bold">Planner login</h2>
-      <b-form @submit="onSubmit" class="px-md-5 pb-md-5">
+      <b-form @submit.prevent="onSubmit" class="px-md-5 pb-md-5">
         <b-form-group>
           <label for="email-input">Email address</label>
           <b-input
@@ -86,12 +86,12 @@ export default {
   },
   methods: {
     onSubmit(evt) {
-      evt.preventDefault();
       this.$v.form.$touch();
       if (this.$v.form.$anyError) {
         return;
+      } else {
+        this.login();
       }
-      alert(JSON.stringify(this.form));
     },
     validateState(name) {
       const { $dirty, $error } = this.$v.form[name];
@@ -99,6 +99,19 @@ export default {
     },
     hasError(field, errorName = 'required') {
       return this.$v.form[field].$dirty ? !this.$v.form[field][errorName] : null;
+    },
+    login () {
+      this.$store
+        .dispatch('login', {
+          email: this.form.email,
+          password: this.form.password
+        })
+        .then(() => {
+          this.$router.push('/dashboard')
+        })
+        .catch(err => {
+          console.log(err)
+        })
     }
   },
 };
