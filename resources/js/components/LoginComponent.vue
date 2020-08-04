@@ -11,7 +11,7 @@
   border-radius: 0;
 }
 
-.form-control:focus {
+.form-control:focus:not(.is-invalid) {
   border-color: $bbraunGreen;
 }
 
@@ -42,7 +42,8 @@
             :state="validateState('email')"
             id="email-input"
           ></b-input>
-          <b-form-invalid-feedback :state="validateState('email')">Email address is required.</b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="hasError('email')">Email address is required.</b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="hasError('email', 'email')">Email is not valid.</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group>
@@ -54,7 +55,7 @@
             :state="validateState('password')"
             id="password-input"
           ></b-input>
-          <b-form-invalid-feedback :state="validateState('password')">Password is required.</b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="hasError('password')">Password is required.</b-form-invalid-feedback>
         </b-form-group>
 
         <b-button type="submit" variant="primary" class="w-100" :disabled="$v.form.$invalid">Login</b-button>
@@ -65,7 +66,7 @@
 
 <script>
 import { validationMixin } from "vuelidate";
-import { required } from "vuelidate/lib/validators";
+import { required, email } from "vuelidate/lib/validators";
 
 export default {
   mixins: [validationMixin],
@@ -81,6 +82,7 @@ export default {
     form: {
       email: {
         required,
+        email
       },
       password: {
         required,
@@ -100,6 +102,9 @@ export default {
       const { $dirty, $error } = this.$v.form[name];
       return $dirty ? !$error : null;
     },
+    hasError(field, errorName = 'required') {
+      return this.$v.form[field].$dirty ? !this.$v.form[field][errorName] : null;
+    }
   },
 };
 </script>
