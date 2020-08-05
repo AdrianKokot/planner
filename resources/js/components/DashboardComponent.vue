@@ -18,9 +18,11 @@ section {
       </div>
     </nav>
 
-    <section>
+    <section class="pb-5">
       <b-tabs content-class="mt-3" nav-wrapper-class="border-0" active-nav-item-class="border-bottom border-primary" no-nav-style>
-        <b-tab title="Calendar" lazy>Calendar will be here</b-tab>
+        <b-tab title="Calendar" lazy>
+          <calendar-component></calendar-component>
+        </b-tab>
         <b-tab title="Budget" lazy>Budget will be here</b-tab>
       </b-tabs>
     </section>
