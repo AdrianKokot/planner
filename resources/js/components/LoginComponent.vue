@@ -38,8 +38,7 @@
 <template>
   <div class="d-flex justify-content-center align-items-center w-100" style="min-height: 100vh">
     <div class="col-lg-6 col-md-10 bg-white p-5">
-      <h2 class="text-center pb-md-5 pt-md-3 font-weight-bold">Planner login</h2>
-      <!-- <b-form-invalid-feedback v-if="errors.has('credentials')">Email addres or password is invalid.</b-form-invalid-feedback> -->
+      <h2 class="text-center pb-md-5 pt-md-3">Planner login</h2>
       <b-form @submit.prevent="onSubmit" class="px-md-5 pb-md-5">
         <b-form-group>
           <label for="email-input">Email address</label>
