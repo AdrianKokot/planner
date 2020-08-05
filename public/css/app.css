@@ -14131,3 +14131,11 @@ body > main#app {
   background: linear-gradient(47deg, #00a674 27%, #00b580 58%, #00d998 100%);
 }
 
+*:focus {
+  outline: none !important;
+}
+
+* {
+  transition: 0.2s color, 0.2s border;
+}
+

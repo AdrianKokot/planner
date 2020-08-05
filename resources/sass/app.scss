@@ -22,3 +22,12 @@ body > main#app {
     rgba(0, 217, 152, 1) 100%
   );
 }
+
+*:focus {
+  outline: none !important;
+}
+
+
+* {
+  transition: .2s color, .2s border;
+}
