@@ -14126,7 +14126,7 @@ body > main#app {
   min-height: 100vh;
 }
 
-body {
+.bg-bbraun-green {
   background: #00a674;
   background: linear-gradient(47deg, #00a674 27%, #00b580 58%, #00d998 100%);
 }

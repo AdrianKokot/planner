@@ -40,7 +40,6 @@ export default new Vuex.Store({
             commit('handleError', err);
           }
         })
-
     },
     logout({ commit }) {
       commit('clearUserData')

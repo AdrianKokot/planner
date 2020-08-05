@@ -1,5 +1,5 @@
 <style lang="scss" scoped>
-@import 'resources/sass/_variables';
+@import "resources/sass/_variables";
 
 .form-control {
   border-width: 0 0 1px 0;
@@ -18,26 +18,25 @@
 }
 
 .d-flex > .bg-white {
-  box-shadow: 0px 0px 5px rgba(0,0,0,0.3);
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.3);
   border-radius: 3px;
 }
 
-.loader {
-  display: flex;
-  width: 100vw;
-  height: 100vh;
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: rgba(0,0,0,0.8);
-  justify-content: center;
-  align-items: center;
+.d-flex.w-100 {
+  min-height: 100vh;
 }
 </style>
 
 <template>
-  <div class="d-flex justify-content-center align-items-center w-100" style="min-height: 100vh">
-    <div class="col-lg-6 col-md-10 bg-white p-5">
+  <div class="d-flex justify-content-center align-items-center w-100 container-md">
+    <b-overlay class="col-lg-6 col-md-10 bg-white p-5"
+      id="overlay-background"
+      :show="isPending"
+      :variant="'light'"
+      spinner-variant="primary"
+      :opacity=".85"
+      :blur="'2px'"
+    >
       <h2 class="text-center pb-md-5 pt-md-3">Planner login</h2>
       <b-form @submit.prevent="onSubmit" class="px-md-5 pb-md-5">
         <b-form-group>
@@ -51,7 +50,6 @@
           ></b-input>
           <b-form-invalid-feedback v-if="hasError('email')">Email address is required.</b-form-invalid-feedback>
           <b-form-invalid-feedback v-if="hasError('email', 'email')">Email is not valid.</b-form-invalid-feedback>
-          <b-form-invalid-feedback v-if="hasError('email', 'validCredentials')">Email address or password is invalid.</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group>
@@ -64,14 +62,14 @@
             id="password-input"
           ></b-input>
           <b-form-invalid-feedback v-if="hasError('password')">Password is required.</b-form-invalid-feedback>
+          <b-form-invalid-feedback
+            v-if="hasError('password', 'validCredentials')"
+          >Email address or password is invalid.</b-form-invalid-feedback>
         </b-form-group>
 
         <b-button type="submit" variant="primary" class="w-100" :disabled="$v.form.$invalid">Login</b-button>
       </b-form>
-    </div>
-    <div class="loader" v-show="isPending">
-      <b-spinner label="Loading..." variant="primary"></b-spinner>
-    </div>
+    </b-overlay>
   </div>
 </template>
 
@@ -80,6 +78,12 @@ import { validationMixin } from "vuelidate";
 import { required, email } from "vuelidate/lib/validators";
 
 export default {
+  beforeCreate: function () {
+    document.body.classList.add('bg-bbraun-green');
+  },
+  destroyed: function() {
+    document.body.classList.remove('bg-bbraun-green');
+  },
   mixins: [validationMixin],
   data() {
     return {
@@ -88,7 +92,7 @@ export default {
         password: "",
       },
       isPending: false,
-      invalidCredentials: false
+      invalidCredentials: false,
     };
   },
   validations: {
@@ -96,14 +100,14 @@ export default {
       email: {
         required,
         email,
-        validCredentials: function() {
-          const res = !this.invalidCredentials;
-          if(this.invalidCredentials) this.invalidCredentials = false;
-          return res;
-        }
       },
       password: {
         required,
+        validCredentials: function () {
+          const res = !this.invalidCredentials;
+          if (this.invalidCredentials) this.invalidCredentials = false;
+          return res;
+        },
       },
     },
   },
@@ -120,26 +124,28 @@ export default {
       const { $dirty, $error } = this.$v.form[name];
       return $dirty ? !$error : null;
     },
-    hasError(field, errorName = 'required') {
-      return this.$v.form[field].$dirty ? !this.$v.form[field][errorName] : null;
+    hasError(field, errorName = "required") {
+      return this.$v.form[field].$dirty
+        ? !this.$v.form[field][errorName]
+        : null;
     },
-    login () {
+    login() {
       this.isPending = true;
       this.$store
-        .dispatch('login', {
+        .dispatch("login", {
           email: this.form.email,
-          password: this.form.password
+          password: this.form.password,
         })
         .then(() => {
-          this.$router.push('/dashboard');
+          this.$router.push("/dashboard");
         })
-        .catch(err => {
+        .catch((err) => {
           this.invalidCredentials = true;
         })
-        .finally(err => {
+        .finally((err) => {
           this.isPending = false;
         });
-    }
+    },
   },
 };
 </script>
