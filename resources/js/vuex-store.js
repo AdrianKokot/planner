@@ -20,6 +20,9 @@ export default new Vuex.Store({
     clearUserData() {
       localStorage.removeItem('user')
       location.reload()
+    },
+    handleError(err) {
+      throw err;
     }
   },
 
@@ -28,11 +31,14 @@ export default new Vuex.Store({
       return axios
         .post('/login', credentials)
         .then(({ data }) => {
-          console.log(data);
           commit('setUserData', data)
         })
         .catch(err => {
-          console.log(err.response);
+          localStorage.removeItem('user');
+
+          if (err.response.status === 422) {
+            commit('handleError', err);
+          }
         })
 
     },

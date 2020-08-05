@@ -39,6 +39,7 @@
   <div class="d-flex justify-content-center align-items-center w-100" style="min-height: 100vh">
     <div class="col-lg-6 col-md-10 bg-white p-5">
       <h2 class="text-center pb-md-5 pt-md-3 font-weight-bold">Planner login</h2>
+      <!-- <b-form-invalid-feedback v-if="errors.has('credentials')">Email addres or password is invalid.</b-form-invalid-feedback> -->
       <b-form @submit.prevent="onSubmit" class="px-md-5 pb-md-5">
         <b-form-group>
           <label for="email-input">Email address</label>
@@ -51,6 +52,7 @@
           ></b-input>
           <b-form-invalid-feedback v-if="hasError('email')">Email address is required.</b-form-invalid-feedback>
           <b-form-invalid-feedback v-if="hasError('email', 'email')">Email is not valid.</b-form-invalid-feedback>
+          <b-form-invalid-feedback v-if="hasError('email', 'validCredentials')">Email address or password is invalid.</b-form-invalid-feedback>
         </b-form-group>
 
         <b-form-group>
@@ -86,14 +88,20 @@ export default {
         email: "",
         password: "",
       },
-      isPending: false
+      isPending: false,
+      invalidCredentials: false
     };
   },
   validations: {
     form: {
       email: {
         required,
-        email
+        email,
+        validCredentials: function() {
+          const res = !this.invalidCredentials;
+          if(this.invalidCredentials) this.invalidCredentials = false;
+          return res;
+        }
       },
       password: {
         required,
@@ -124,10 +132,10 @@ export default {
           password: this.form.password
         })
         .then(() => {
-          this.$router.push('/dashboard')
+          this.$router.push('/dashboard');
         })
         .catch(err => {
-          console.log(err)
+          this.invalidCredentials = true;
         })
         .finally(err => {
           this.isPending = false;
