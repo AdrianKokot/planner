@@ -24,7 +24,10 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "@fortawesome/fontawesome-free": "^5.14.0",
+        "@fullcalendar/bootstrap": "^5.2.0",
         "@fullcalendar/daygrid": "^5.2.0",
+        "@fullcalendar/interaction": "^5.2.0",
         "@fullcalendar/vue": "^5.2.0",
         "bootstrap-vue": "^2.16.0",
         "vue-router": "^3.3.4",

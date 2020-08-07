@@ -10,6 +10,9 @@ import store from './vuex-store';
 import { BootstrapVue } from 'bootstrap-vue'
 Vue.use(BootstrapVue);
 
+import axios from 'axios';
+Vue.use(axios);
+
 
 const app = new Vue({
     el: '#app',

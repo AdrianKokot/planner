@@ -7,7 +7,7 @@
 // Bootstrap
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
-
+@import url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css');
 
 body > main#app {
   min-height: 100vh;
@@ -30,4 +30,22 @@ body > main#app {
 
 * {
   transition: .2s color, .2s border;
+}
+
+
+.fc-view-harness.fc-view-harness-active {
+  overflow-x: auto;
+}
+.fc-daygrid.fc-dayGridMonth-view.fc-view {
+  min-width: 600px
+}
+
+@media screen and (max-width: 600px) {
+  .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr {
+    display: flex;
+    flex-direction: column;
+  }
+  .fc-header-toolbar.fc-toolbar.fc-toolbar-ltr > .fc-toolbar-chunk:nth-of-type(2) {
+    margin: 15px 0;
+  }
 }
