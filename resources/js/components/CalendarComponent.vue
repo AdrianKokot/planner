@@ -1,6 +1,7 @@
 <template>
   <section class="px-4 pt-3 pb-5">
     <FullCalendar :options="calendarOptions" />
+    <event-details-component :event="selectedEvent"></event-details-component>
   </section>
 </template>
 <script>
@@ -11,22 +12,23 @@ import interactionPlugin from "@fullcalendar/interaction";
 
 export default {
   components: {
-    FullCalendar, // make the <FullCalendar> tag available
+    FullCalendar
   },
   data() {
     return {
+      selectedEvent: null,
+      selectedDate: null,
       calendarOptions: {
         plugins: [dayGridPlugin, interactionPlugin, listPlugin],
         initialView: "dayGridMonth",
         dayMaxEvents: true,
+        eventClick: this.handleEventClick,
         dateClick: this.handleDateClick,
         eventDisplay: 'block',
-        // displayEventTime: true,
-        // displayEventEnd: false,
         eventTimeFormat: {
-          hour: 'numeric',
+          hour: '2-digit',
           minute: '2-digit',
-          meridiem: 'short'
+          hour12: false
         },
         headerToolbar: {
           left: "today",
@@ -53,9 +55,14 @@ export default {
     };
   },
   methods: {
-    handleDateClick: function (arg) {
-      alert("date click! " + arg.dateStr);
+    handleDateClick: function (dateClickInfo ) {
+      // this.selectedDate = dateClickInfo.date;
+      // this.$bvModal.show('new-event-modal');
     },
+    handleEventClick: function (eventClickInfo) {
+      this.selectedEvent = eventClickInfo.event;
+      this.$bvModal.show('event-details-modal');
+    }
   },
 };
 </script>
