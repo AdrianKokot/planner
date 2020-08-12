@@ -10,7 +10,7 @@ class EventController extends Controller
 
     public function index() {
       return response([
-        ['id' => 1, 'title' => 'my event 1', 'start' => '2020-08-07T09:30:00', 'end'=>'2020-08-07T10:30:00', 'color' => 'var(--primary)', 'textColor' => 'white', 'description'=>'my event desription', 'expenses' => [
+        ['id' => 1, 'title' => 'Ut finibus condimentum nibh pulvinar gravida. Praesent sit amet molestie sem. Donec sit amet pharetra sapien. Quisque pharetra venenatis nisi id eleifend. Aliquam eu tortor nunc. Ut cursus felis quis aliquam semper. Sed iaculis scelerisque felis molestie.', 'start' => '2020-08-07T09:30:00', 'end'=>'2020-08-07T10:30:00', 'color' => 'var(--primary)', 'textColor' => 'white', 'description'=>'my event desription', 'expenses' => [
           ['name' => 'Snacks for guests', 'category' => 'Food', 'amount' => 249.99, 'id' => 1, 'currency' => 'PLN'],
         ]],
         ['id' => 5, 'title' => 'my event 5', 'start' => '2020-08-07T11:30:00', 'end'=>'2020-08-07T12:00:00', 'color' => 'var(--primary)', 'textColor' => 'white', 'expenses' => [

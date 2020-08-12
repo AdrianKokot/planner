@@ -2,6 +2,7 @@
   <section class="px-4 pt-3 pb-5">
     <FullCalendar :options="calendarOptions" />
     <event-details-component :event="selectedEvent"></event-details-component>
+    <edit-event-component :event="selectedEvent"></edit-event-component>
   </section>
 </template>
 <script>

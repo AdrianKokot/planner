@@ -6,10 +6,10 @@
 }
 </style>
 <template>
-  <b-modal id="event-details-modal" :header-class="null">
+  <b-modal id="event-details-modal">
     <template v-slot:modal-header="{ close }" modal>
       <div class="modal-header" :style="{backgroundColor: eventBackgroundColor, color: eventTextColor}">
-        <h5 class="m-0">{{title}}</h5>
+        <h4 class="m-0">{{title}}</h4>
         <b-button-close size="sm" class="m-0 p-0" :style="{ color: eventTextColor, transition: '.3s'}" @click="close()">
           &times;
         </b-button-close>
@@ -32,31 +32,28 @@
     </div>
 
     <template v-slot:modal-footer="{ cancel }">
-      <!-- <b-button size="sm" variant="success" @click="ok()">
-        OK
-      </b-button> -->
+      <b-button variant="outline-info" @click="showEditForm()">
+        Edit
+      </b-button>
+      <b-button variant="outline-danger" @click="destroy()">
+        Delete
+      </b-button>
       <b-button variant="outline-secondary" @click="cancel()">
         Close
       </b-button>
-      <!-- <b-button size="sm" variant="outline-secondary" @click="hide('edit')">
-        Forget it
-      </b-button> -->
     </template>
   </b-modal>
 </template>
 <script>
 export default {
-  data() {
-    return {
-      timeStringLocale: 'en-UK',
-
-      localeTimeStringOptions: ['en-UK', {timeZone: 'Europe/Berlin', hour12: true, hour: '2-digit', minute: '2-digit'}]
-    };
-  },
   methods: {
-    // handleDateClick: function (arg) {
-    //   alert("date click! " + arg.dateStr);
-    // },
+    showEditForm: function() {
+      this.$bvModal.show('edit-event-modal');
+    },
+    destroy: function() {
+      console.log(this.event);
+      this.$bvModal.hide('event-details-modal');
+    },
     convertToTimeString: (date) => (new Date(date)).toLocaleTimeString('en-UK', {timeZone: 'Europe/Berlin', hour12: false, hour: '2-digit', minute: '2-digit'}),
     convertToDateString: (date) => (new Date(date)).toLocaleDateString('eu', {timeZone: 'Europe/Berlin'})
   },
