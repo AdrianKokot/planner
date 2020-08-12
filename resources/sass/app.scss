@@ -4,10 +4,12 @@
 // Variables
 @import 'variables';
 
-// Bootstrap
+// Bootstrap and FontAwesome
 @import '~bootstrap/scss/bootstrap';
 @import '~bootstrap-vue/src/index.scss';
 @import url('https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.14.0/css/all.min.css');
+
+// Basic customization
 
 body > main#app {
   min-height: 100vh;
@@ -27,11 +29,11 @@ body > main#app {
   outline: none !important;
 }
 
-
 * {
   transition: .2s color, .2s border;
 }
 
+// FullCalendar customization
 
 .fc-view-harness.fc-view-harness-active {
   overflow-x: auto;
@@ -49,3 +51,18 @@ body > main#app {
     margin: 15px 0;
   }
 }
+
+.fc-h-event .fc-event-main {
+  padding: .1rem .5rem;
+}
+
+.fc .fc-daygrid-event-harness {
+  margin-bottom: .1rem;
+  cursor: pointer;
+}
+
+.fc-h-event .fc-event-main-frame {
+  // flex-direction: column;
+}
+
+// End of FullCalendar customization

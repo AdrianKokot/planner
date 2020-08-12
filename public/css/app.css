@@ -14158,3 +14158,12 @@ body > main#app {
   }
 }
 
+.fc-h-event .fc-event-main {
+  padding: 0.1rem 0.5rem;
+}
+
+.fc .fc-daygrid-event-harness {
+  margin-bottom: 0.1rem;
+  cursor: pointer;
+}
+

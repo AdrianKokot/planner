@@ -6,6 +6,7 @@
 <script>
 import FullCalendar from "@fullcalendar/vue";
 import dayGridPlugin from "@fullcalendar/daygrid";
+import listPlugin from '@fullcalendar/list';
 import interactionPlugin from "@fullcalendar/interaction";
 
 export default {
@@ -15,16 +16,25 @@ export default {
   data() {
     return {
       calendarOptions: {
-        plugins: [dayGridPlugin, interactionPlugin],
+        plugins: [dayGridPlugin, interactionPlugin, listPlugin],
         initialView: "dayGridMonth",
+        dayMaxEvents: true,
         dateClick: this.handleDateClick,
+        eventDisplay: 'block',
+        // displayEventTime: true,
+        // displayEventEnd: false,
+        eventTimeFormat: {
+          hour: 'numeric',
+          minute: '2-digit',
+          meridiem: 'short'
+        },
         headerToolbar: {
           left: "today",
           center: "title",
           right: "prev,next",
         },
         footerToolbar: {
-          center: "dayGridMonth,dayGridWeek,dayGridDay",
+          center: "dayGridMonth,dayGridWeek,dayGridDay,listWeek",
         },
         firstDay: 1,
         selectable: true,
