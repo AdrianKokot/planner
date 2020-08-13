@@ -6,15 +6,9 @@
 }
 </style>
 <template>
-  <b-modal
-    id="edit-event-modal"
-    @show="onShow()"
-  >
+  <b-modal id="edit-event-modal" @show="onShow()">
     <template v-slot:modal-header="{ close }" modal>
-      <div
-        class="modal-header"
-        :style="{backgroundColor: 'var(--' + color + ')', color: 'white'}"
-      >
+      <div class="modal-header" :style="{backgroundColor: 'var(--' + color + ')', color: 'white'}">
         <h4 class="m-0">Edit event</h4>
         <b-button-close
           size="sm"
@@ -98,6 +92,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
+import eventDataService from "../services/event-data-service";
 
 const dateValidator = (value) =>
   /([0-9]{4}-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([0-1][0-9]|2[0-4]):([0-5][0-9]))/.test(
@@ -110,15 +105,15 @@ export default {
   data() {
     return {
       colors: [
-        { value: 'primary', text: 'Default' },
-        { value: 'blue', text: 'Blue' },
-        { value: 'indigo', text: 'Indigo' },
-        { value: 'purple', text: 'Purple' },
-        { value: 'pink', text: 'Pink' },
-        { value: 'red', text: 'Red' },
-        { value: 'orange', text: 'Orange' },
-        { value: 'teal', text: 'Teal' },
-        { value: 'cyan', text: 'Cyan' }
+        { value: "primary", text: "Default" },
+        { value: "blue", text: "Blue" },
+        { value: "indigo", text: "Indigo" },
+        { value: "purple", text: "Purple" },
+        { value: "pink", text: "Pink" },
+        { value: "red", text: "Red" },
+        { value: "orange", text: "Orange" },
+        { value: "teal", text: "Teal" },
+        { value: "cyan", text: "Cyan" },
       ],
       color: null,
       title: "",
@@ -139,15 +134,25 @@ export default {
         this.event.extendedProps != null
           ? this.event.extendedProps.description ?? ""
           : "";
-      this.color = this.event.backgroundColor.slice(6,-1);
-      console.log(this.color);
+      this.color = this.event.backgroundColor.slice(6, -1);
     },
     submit: function () {
       this.onSubmit();
     },
     onSubmit: function () {
       this.$v.$touch();
-      console.log(this.$v);
+      if (!this.$v.$invalid) {
+        eventDataService.update(this.event.id, {
+          title: this.title,
+          start: this.start,
+          end: this.end,
+          description: this.description,
+          backgroundColor: `var(--${this.color})`,
+        }).then(resposne => {
+          // TODO Api na backendzie
+          console.log(response);
+        })
+      }
     },
   },
   validations: {
@@ -167,8 +172,8 @@ export default {
       maxLength: maxLength(255),
     },
     color: {
-      required
-    }
+      required,
+    },
   },
   computed: {},
 };
