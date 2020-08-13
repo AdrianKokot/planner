@@ -2,4 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/events', 'API\EventController@index');
+Route::middleware('auth:sanctum')->group(function() {
+  Route::get('/events', 'API\EventController@index');
+});
