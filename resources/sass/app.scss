@@ -61,8 +61,16 @@ body > main#app {
   cursor: pointer;
 }
 
-.fc-h-event .fc-event-main-frame {
-  // flex-direction: column;
+.fc-daygrid-block-event .fc-event-time, .fc-daygrid-block-event .fc-event-title {
+  max-width: 150px;
+}
+// End of FullCalendar customization
+
+.btn:disabled {
+  cursor: not-allowed;
 }
 
-// End of FullCalendar customization
+
+textarea.form-control.is-invalid, textarea.form-control.is-valid {
+  background-position: top calc(0.4em + 0.1875rem) right calc(0.4em + 0.1875rem + 15px) !important;
+}

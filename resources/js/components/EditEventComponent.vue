@@ -1,28 +1,175 @@
+<style lang="scss" scoped>
+::v-deep #edit-event-modal___BV_modal_header_ {
+  display: block;
+  padding: 0;
+  border: none;
+}
+</style>
 <template>
-  <b-modal id="edit-event-modal" title="Edit event" header-class="align-items-center">
-    <p>{{event}}</p>
+  <b-modal
+    id="edit-event-modal"
+    @show="onShow()"
+  >
+    <template v-slot:modal-header="{ close }" modal>
+      <div
+        class="modal-header"
+        :style="{backgroundColor: 'var(--' + color + ')', color: 'white'}"
+      >
+        <h4 class="m-0">Edit event</h4>
+        <b-button-close
+          size="sm"
+          class="m-0 p-0"
+          :style="{ color: 'white', transition: '.3s'}"
+          @click="close()"
+        >&times;</b-button-close>
+      </div>
+    </template>
+    <b-form @submit.prevent="onSubmit">
+      <b-form-group label="Title" label-for="title-input">
+        <b-input
+          id="title-input"
+          type="text"
+          v-model="$v.title.$model"
+          :state="$v.title.$dirty ? !$v.title.$error : null"
+        ></b-input>
+        <b-form-invalid-feedback v-if="!$v.title.required">Title is required.</b-form-invalid-feedback>
+        <b-form-invalid-feedback
+          v-if="!$v.title.maxLength"
+        >Title can be max {{$v.title.$params.maxLength.max}} characters long.</b-form-invalid-feedback>
+      </b-form-group>
+
+      <b-form-group label="Event start" label-for="start-input">
+        <b-input
+          id="start-input"
+          type="datetime-local"
+          v-model="$v.start.$model"
+          :state="$v.start.$dirty ? !$v.start.$error : null"
+        ></b-input>
+        <b-form-invalid-feedback v-if="!$v.start.required">Start date and time is required.</b-form-invalid-feedback>
+        <b-form-invalid-feedback
+          v-if="!$v.start.dateValidator"
+        >Start date and time is not valid date and time.</b-form-invalid-feedback>
+      </b-form-group>
+
+      <b-form-group label="Event end" label-for="end-input">
+        <b-input
+          id="end-input"
+          type="datetime-local"
+          v-model="$v.end.$model"
+          :state="$v.end.$dirty ? !$v.end.$error : null"
+        ></b-input>
+        <b-form-invalid-feedback v-if="!$v.end.required">End date and time is required.</b-form-invalid-feedback>
+        <b-form-invalid-feedback
+          v-if="!$v.end.dateValidator"
+        >End date and time is not valid date and time.</b-form-invalid-feedback>
+      </b-form-group>
+
+      <b-form-group label="Color" label-for="color-input">
+        <b-form-select
+          id="color-input"
+          v-model="$v.color.$model"
+          :options="colors"
+          :state="$v.color.$dirty ? !$v.color.$error : null"
+        ></b-form-select>
+        <b-form-invalid-feedback v-if="!$v.color.required">Color is required.</b-form-invalid-feedback>
+      </b-form-group>
+
+      <b-form-group label="Description" label-for="description-input">
+        <b-form-textarea
+          id="description-input"
+          v-model="$v.description.$model"
+          :state="$v.description.$dirty ? !$v.description.$error : null"
+          placeholder
+          rows="3"
+          max-rows="6"
+        ></b-form-textarea>
+        <b-form-invalid-feedback
+          v-if="!$v.description.maxLength"
+        >Description can be max {{$v.description.$params.maxLength.max}} characters long.</b-form-invalid-feedback>
+      </b-form-group>
+    </b-form>
 
     <template v-slot:modal-footer="{ cancel }">
-      <b-button variant="outline-info" @click="update()">
-        Save
-      </b-button>
-      <b-button variant="outline-secondary" @click="cancel()">
-        Cancel
-      </b-button>
+      <b-button variant="outline-info" @click.prevent="submit()" :disabled="$v.$invalid">Save</b-button>
+      <b-button variant="outline-secondary" @click="cancel()">Cancel</b-button>
     </template>
   </b-modal>
 </template>
 <script>
+import { validationMixin } from "vuelidate";
+import { required, maxLength } from "vuelidate/lib/validators";
+
+const dateValidator = (value) =>
+  /([0-9]{4}-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([0-1][0-9]|2[0-4]):([0-5][0-9]))/.test(
+    value
+  );
+
 export default {
+  mixins: [validationMixin],
+  props: ["event"],
+  data() {
+    return {
+      colors: [
+        { value: 'primary', text: 'Default' },
+        { value: 'blue', text: 'Blue' },
+        { value: 'indigo', text: 'Indigo' },
+        { value: 'purple', text: 'Purple' },
+        { value: 'pink', text: 'Pink' },
+        { value: 'red', text: 'Red' },
+        { value: 'orange', text: 'Orange' },
+        { value: 'teal', text: 'Teal' },
+        { value: 'cyan', text: 'Cyan' }
+      ],
+      color: null,
+      title: "",
+      start: null,
+      end: null,
+      description: "",
+    };
+  },
   methods: {
-    update: function() {
-      console.log(this.event);
+    convertToDateTime: (datetime) =>
+      new Date(datetime).toISOString().slice(0, 11) +
+      new Date(datetime).toTimeString().slice(0, 8),
+    onShow: function () {
+      this.title = this.event.title;
+      this.start = this.convertToDateTime(this.event.start);
+      this.end = this.convertToDateTime(this.event.end);
+      this.description =
+        this.event.extendedProps != null
+          ? this.event.extendedProps.description ?? ""
+          : "";
+      this.color = this.event.backgroundColor.slice(6,-1);
+      console.log(this.color);
+    },
+    submit: function () {
+      this.onSubmit();
+    },
+    onSubmit: function () {
+      this.$v.$touch();
+      console.log(this.$v);
+    },
+  },
+  validations: {
+    title: {
+      required,
+      maxLength: maxLength(50),
+    },
+    start: {
+      required,
+      dateValidator,
+    },
+    end: {
+      required,
+      dateValidator,
+    },
+    description: {
+      maxLength: maxLength(255),
+    },
+    color: {
+      required
     }
   },
-  computed: {
-  },
-  props: [
-    'event'
-  ]
+  computed: {},
 };
 </script>

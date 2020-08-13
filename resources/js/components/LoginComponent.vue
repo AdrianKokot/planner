@@ -39,27 +39,25 @@
     >
       <h2 class="text-center pb-md-5 pt-md-3">Planner login</h2>
       <b-form @submit.prevent="onSubmit" class="px-md-5 pb-md-5">
-        <b-form-group>
-          <label for="email-input">Email address</label>
+        <b-form-group label="Email address" label-for="email-input">
           <b-input
+            id="email-input"
+            type="email"
             placeholder="jon.doe@mail.com"
             v-model="$v.form.email.$model"
-            type="email"
             :state="validateState('email')"
-            id="email-input"
           ></b-input>
           <b-form-invalid-feedback v-if="hasError('email')">Email address is required.</b-form-invalid-feedback>
           <b-form-invalid-feedback v-if="hasError('email', 'email')">Email is not valid.</b-form-invalid-feedback>
         </b-form-group>
 
-        <b-form-group>
-          <label for="password-input">Password</label>
+        <b-form-group label="Password" label-for="password-input">
           <b-input
+            id="password-input"
+            type="password"
             placeholder="*************"
             v-model="$v.form.password.$model"
-            type="password"
             :state="validateState('password')"
-            id="password-input"
           ></b-input>
           <b-form-invalid-feedback v-if="hasError('password')">Password is required.</b-form-invalid-feedback>
           <b-form-invalid-feedback

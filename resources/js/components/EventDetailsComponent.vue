@@ -8,11 +8,17 @@
 <template>
   <b-modal id="event-details-modal">
     <template v-slot:modal-header="{ close }" modal>
-      <div class="modal-header" :style="{backgroundColor: eventBackgroundColor, color: eventTextColor}">
+      <div
+        class="modal-header text-white"
+        :style="{backgroundColor: eventBackgroundColor}"
+      >
         <h4 class="m-0">{{title}}</h4>
-        <b-button-close size="sm" class="m-0 p-0" :style="{ color: eventTextColor, transition: '.3s'}" @click="close()">
-          &times;
-        </b-button-close>
+        <b-button-close
+          size="sm"
+          class="m-0 p-0 text-white"
+          style="transition: .3s"
+          @click="close()"
+        >&times;</b-button-close>
       </div>
     </template>
 
@@ -27,72 +33,73 @@
     <div class="py-2 px-3" v-if="expenses != null">
       <div class="font-weight-bolder">Connected expenses</div>
       <ul>
-        <li v-for="expense of expenses" :key="expense.id">{{ expense.name }} - {{ Number(expense.amount).toLocaleString() }} {{ expense.currency }}</li>
+        <li
+          v-for="expense of expenses"
+          :key="expense.id"
+        >{{ expense.name }} - {{ Number(expense.amount).toLocaleString() }} {{ expense.currency }}</li>
       </ul>
     </div>
 
     <template v-slot:modal-footer="{ cancel }">
-      <b-button variant="outline-info" @click="showEditForm()">
-        Edit
-      </b-button>
-      <b-button variant="outline-danger" @click="destroy()">
-        Delete
-      </b-button>
-      <b-button variant="outline-secondary" @click="cancel()">
-        Close
-      </b-button>
+      <b-button variant="outline-info" @click="showEditForm()">Edit</b-button>
+      <b-button variant="outline-danger" @click="destroy()">Delete</b-button>
+      <b-button variant="outline-secondary" @click="cancel()">Close</b-button>
     </template>
   </b-modal>
 </template>
 <script>
 export default {
   methods: {
-    showEditForm: function() {
-      this.$bvModal.show('edit-event-modal');
+    showEditForm: function () {
+      this.$bvModal.show("edit-event-modal");
     },
-    destroy: function() {
+    destroy: function () {
       console.log(this.event);
-      this.$bvModal.hide('event-details-modal');
+      this.$bvModal.hide("event-details-modal");
     },
-    convertToTimeString: (date) => (new Date(date)).toLocaleTimeString('en-UK', {timeZone: 'Europe/Berlin', hour12: false, hour: '2-digit', minute: '2-digit'}),
-    convertToDateString: (date) => (new Date(date)).toLocaleDateString('eu', {timeZone: 'Europe/Berlin'})
+    convertToTimeString: (date) =>
+      new Date(date).toLocaleTimeString("en-UK", {
+        timeZone: "Europe/Berlin",
+        hour12: false,
+        hour: "2-digit",
+        minute: "2-digit",
+      }),
+    convertToDateString: (date) =>
+      new Date(date).toLocaleDateString("pl", { timeZone: "Europe/Berlin" }),
   },
   computed: {
-    expenses: function() { return this.event != null && this.event.extendedProps.expenses ? this.event.extendedProps.expenses : null; },
-    eventTextColor: function() { return this.event != null ? this.event.textColor : 'black'},
-    eventBackgroundColor: function() { return this.event != null ? this.event.backgroundColor : 'transparent'},
-    title: function() { return this.event != null ? this.event.title : ''; },
-    description: function() { return this.event != null && this.event.extendedProps.description != null ? this.event.extendedProps.description : '' },
-    eventTime: function() {
+    expenses: function () {
+      return this.event != null && this.event.extendedProps.expenses
+        ? this.event.extendedProps.expenses
+        : null;
+    },
+    eventBackgroundColor: function () {
+      return this.event != null ? this.event.backgroundColor : "transparent";
+    },
+    title: function () {
+      return this.event != null ? this.event.title : "";
+    },
+    description: function () {
+      return this.event != null && this.event.extendedProps.description != null
+        ? this.event.extendedProps.description
+        : "";
+    },
+    eventTime: function () {
       if (this.event != null) {
-        const timesAndDates = {
+        const tdObj = {
           timeStart: this.convertToTimeString(this.event.start),
           timeEnd: this.convertToTimeString(this.event.end),
           dateStart: this.convertToDateString(this.event.start),
-          dateEnd: this.convertToDateString(this.event.end)
-        }
+          dateEnd: this.convertToDateString(this.event.end),
+        };
 
-        if (timesAndDates.dateStart != timesAndDates.dateEnd) {
-          return timesAndDates.timeStart
-                  + ' '
-                  + timesAndDates.dateStart
-                  + ' - '
-                  + timesAndDates.timeEnd
-                  + ' '
-                  + timesAndDates.dateEnd;
-        } else {
-          return timesAndDates.timeStart
-                  + ' - '
-                  + timesAndDates.timeEnd
-                  + ', '
-                  + timesAndDates.dateStart;
-        }
+        return tdObj.dateStart != tdObj.dateEnd
+          ? `${tdObj.timeStart} ${tdObj.dateStart} - ${tdObj.timeEnd} ${tdObj.dateEnd}`
+          : `${tdObj.timeStart} - ${tdObj.timeEnd}, ${tdObj.dateStart}`;
       }
-      return '';
-    }
+      return "";
+    },
   },
-  props: [
-    'event'
-  ]
+  props: ["event"],
 };
 </script>
