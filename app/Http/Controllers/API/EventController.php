@@ -2,30 +2,131 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Event;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Http\Controllers\Controller;
 
 class EventController extends Controller
 {
+  /**
+   * Display a listing of the resource.
+   *
+   * @return \Illuminate\Http\Response
+   */
+  public function index(Request $request)
+  {
+    // TODO add privileges check
+    if (true) {
+      $startTimestamp = $request->query('start');
+      $endTimestamp = $request->query('end');
 
-    public function index() {
-      return response([
-        ['id' => 1, 'title' => 'Ut finibus condimentum nibh pulvinar gravida. Praesent sit amet molestie sem. Donec sit amet pharetra sapien. Quisque pharetra venenatis nisi id eleifend. Aliquam eu tortor nunc. Ut cursus felis quis aliquam semper. Sed iaculis scelerisque felis molestie.', 'start' => '2020-08-07T09:30:00', 'end'=>'2020-08-07T10:30:00', 'color' => 'var(--primary)', 'textColor' => 'white', 'description'=>'my event desription', 'expenses' => [
-          ['name' => 'Snacks for guests', 'category' => 'Food', 'amount' => 249.99, 'id' => 1, 'currency' => 'PLN'],
-        ]],
-        ['id' => 5, 'title' => 'my event 5', 'start' => '2020-08-07T11:30:00', 'end'=>'2020-08-07T12:00:00', 'color' => 'var(--primary)', 'expenses' => [
-          ['name' => 'Snacks for guests', 'category' => 'Food', 'amount' => 249.99, 'id' => 1, 'currency' => 'PLN'],
-        ]],
-        ['id' => 6, 'title' => 'my event 6', 'start' => '2020-08-07T14:30:00', 'end'=>'2020-08-07T14:50:00', 'color' => 'var(--primary)', 'description'=>'my event desription'],
-        ['id' => 7, 'title' => 'my event 7', 'start' => '2020-08-07T15:00:00', 'end'=>'2020-08-07T15:30:00', 'color' => 'var(--primary)', 'expenses' => [
-          ['name' => 'Snacks for guests', 'category' => 'Food', 'amount' => 249.99, 'id' => 1, 'currency' => 'PLN'],
-        ]],
-        ['id' => 8, 'title' => 'my event 8', 'start' => '2020-08-07T15:30:00', 'end'=>'2020-08-07T16:10:00', 'color' => 'var(--primary)', 'description'=>'my event desription'],
-        ['id' => 2, 'title' => 'my event 2', 'start' => '2020-08-06T08:30:00', 'end'=>'2020-08-06T12:30:00', 'color' => 'var(--purple)'],
-        ['id' => 3, 'title' => 'my event 3', 'start' => '2020-08-08T10:10:00', 'end'=>'2020-08-08T12:00:00', 'color' => 'var(--indigo)', 'description'=>'my event desription', 'expenses' => [
-          ['name' => 'Snacks for guests', 'category' => 'Food', 'amount' => 249.99, 'id' => 1, 'currency' => 'PLN'],
-        ]],
-        ['id' => 4, 'title' => 'my event 4', 'start' => '2020-08-09T16:00:00', 'end'=>'2020-08-09T16:45:00', 'color' => 'var(--blue)']
-      ],200);
+      $events = [];
+
+      if ($startTimestamp != null && $endTimestamp != null) {
+        $events = DB::table('events')
+          ->where('start', '>=', $startTimestamp)
+          ->where('end', '<=', $endTimestamp)
+          ->get('*');
+      } else {
+        $events = DB::table('events')->get('*');
+      }
+
+      return response($events, 200);
     }
+
+    return response('Access deined.', 403);
+  }
+
+  /**
+   * Store a newly created resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @return \Illuminate\Http\Response
+   */
+  public function store(Request $request)
+  {
+    // TODO add privileges check
+    if (true) {
+      $validatedData = $request->validate([
+        'start' => 'required|string',
+        'end' => 'required|string',
+        'title' => 'required|string|max:50',
+        'color' => 'required|string|max:32',
+        'description' => 'nullable|string|max:255'
+      ]);
+
+      $event = Event::create($validatedData);
+
+      if ($event != null) {
+        return response($event, 200);
+      } else {
+        return response('', 500);
+      }
+    }
+
+    return response('Access deined.', 403);
+  }
+
+  /**
+   * Display the specified resource.
+   *
+   * @param  \App\Event  $event
+   * @return \Illuminate\Http\Response
+   */
+  public function show(Event $event)
+  {
+    // TODO add privileges check
+    if (true) {
+      return response($event, 200);
+    }
+    return response('Access deined.', 403);
+  }
+
+  /**
+   * Update the specified resource in storage.
+   *
+   * @param  \Illuminate\Http\Request  $request
+   * @param  \App\Event  $event
+   * @return \Illuminate\Http\Response
+   */
+  public function update(Request $request, Event $event)
+  {
+    // TODO add privileges check
+    if (true) {
+      $validatedData = $request->validate([
+        'start' => 'nullable|string',
+        'end' => 'nullable|string',
+        'title' => 'nullable|string|max:50',
+        'color' => 'nullable|string|max:32',
+        'description' => 'nullable|string|max:255'
+      ]);
+
+      if ($event->update($validatedData)) {
+        return response($event, 200);
+      } else {
+        return response('', 500);
+      }
+    }
+
+    return response('Access deined.', 403);
+  }
+
+  /**
+   * Remove the specified resource from storage.
+   *
+   * @param  \App\Event  $event
+   * @return \Illuminate\Http\Response
+   */
+  public function destroy(Event $event)
+  {
+    // TODO add privileges check
+    if (true) {
+      if ($event->delete()) {
+        return response('', 200);
+      }
+      return response('', 500);
+    }
+    return response('Access deined.', 403);
+  }
 }
