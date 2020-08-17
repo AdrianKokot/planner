@@ -2,9 +2,8 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 
 Vue.use(Vuex);
-import axios from 'axios';
 
-axios.defaults.baseURL = 'http://localhost:8000';
+import http from './services/http-common';
 
 export default new Vuex.Store({
   state: {
@@ -15,7 +14,7 @@ export default new Vuex.Store({
     setUserData(state, data) {
       state.user = data.user
       localStorage.setItem('user', JSON.stringify(data))
-      axios.defaults.headers.common.Authorization = `Bearer ${data.token}`
+      http.defaults.headers.common.Authorization = `Bearer ${data.token}`
     },
     clearUserData() {
       localStorage.removeItem('user')
@@ -28,7 +27,7 @@ export default new Vuex.Store({
 
   actions: {
     login({ commit }, credentials) {
-      return axios
+      return http
         .post('/login', credentials)
         .then(({ data }) => {
           commit('setUserData', data)
