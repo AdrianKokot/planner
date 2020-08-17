@@ -6,6 +6,7 @@ use App\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Exception;
 
 class EventController extends Controller
 {

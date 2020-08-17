@@ -142,16 +142,20 @@ export default {
     onSubmit: function () {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        eventDataService.update(this.event.id, {
+        const body = {
+          id: this.event.id,
           title: this.title,
           start: this.start,
           end: this.end,
           description: this.description,
-          backgroundColor: `var(--${this.color})`,
-        }).then(resposne => {
-          // TODO Api na backendzie
-          console.log(response);
-        })
+          color: `var(--${this.color})`,
+        };
+        eventDataService.update(this.event.id, body).then((response) => {
+          if (response.data.id == this.event.id) {
+            this.$emit("updateEvent", body);
+            this.$bvModal.hide("edit-event-modal");
+          }
+        });
       }
     },
   },

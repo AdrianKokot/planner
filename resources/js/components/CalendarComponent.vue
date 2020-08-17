@@ -8,9 +8,9 @@
     :opacity=".85"
     :blur="'2px'"
   >
-    <FullCalendar :options="calendarOptions" />
+    <FullCalendar ref="fullCalendar" :options="calendarOptions" />
     <event-details-component :event="selectedEvent"></event-details-component>
-    <edit-event-component :event="selectedEvent"></edit-event-component>
+    <edit-event-component :event="selectedEvent" @updateEvent="updateEvent"></edit-event-component>
   </b-overlay>
 </template>
 <script>
@@ -57,7 +57,8 @@ export default {
         eventTextColor: "white",
         eventSources: [
           function (fetchInfo, successCallback, failureCallback) {
-            eventDataService.getAll(fetchInfo.startStr, fetchInfo.endStr).then((response) => {
+            eventDataService.getAll({start: fetchInfo.startStr, end: fetchInfo.endStr}).then((response) => {
+              console.log(response);
               successCallback(response.data);
             });
           },
@@ -66,6 +67,16 @@ export default {
     };
   },
   methods: {
+    updateEvent: function(event) {
+      const calendarEvent = this.$refs.fullCalendar.getApi().getEventById(event.id);
+      calendarEvent.setStart(event.start);
+      calendarEvent.setEnd(event.end);
+      calendarEvent.setProp('title', event.title);
+      calendarEvent.setProp('backgroundColor', event.color);
+      calendarEvent.setProp('borderColor', event.color);
+      calendarEvent.setExtendedProp('description', event.description);
+      this.selectedEvent = calendarEvent;
+    },
     handleDateClick: function (dateClickInfo) {
       // this.selectedDate = dateClickInfo.date;
       // this.$bvModal.show('new-event-modal');

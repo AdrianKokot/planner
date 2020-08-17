@@ -5,8 +5,25 @@ class DataService {
     this.url = url;
   }
 
-  getAll() {
-    return http.get(this.url);
+  renderParamsFromOptions(options) {
+    let param = ''
+
+    if(Object.keys(options).length > 0) {
+      param += '?';
+
+      for(let key in options) {
+        param += key + '=' + options[key] + '&';
+      }
+
+      param = param.slice(0, -1);
+    }
+
+    return param;
+  }
+
+  getAll(options) {
+    const params = this.renderParamsFromOptions(options);
+    return http.get(this.url + params);
   }
 
   get(id) {
