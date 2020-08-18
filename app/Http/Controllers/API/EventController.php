@@ -123,8 +123,9 @@ class EventController extends Controller
   {
     // TODO add privileges check
     if (true) {
+      $id = $event->id;
       if ($event->delete()) {
-        return response('', 200);
+        return response(['id' => $id], 200);
       }
       return response('', 500);
     }

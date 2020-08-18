@@ -8,10 +8,7 @@
 <template>
   <b-modal id="event-details-modal">
     <template v-slot:modal-header="{ close }" modal>
-      <div
-        class="modal-header text-white"
-        :style="{backgroundColor: eventBackgroundColor}"
-      >
+      <div class="modal-header text-white" :style="{backgroundColor: eventBackgroundColor}">
         <h4 class="m-0">{{title}}</h4>
         <b-button-close
           size="sm"
@@ -48,14 +45,21 @@
   </b-modal>
 </template>
 <script>
+import eventDataService from "../services/event-data-service";
+
 export default {
   methods: {
     showEditForm: function () {
       this.$bvModal.show("edit-event-modal");
     },
     destroy: function () {
-      console.log(this.event);
-      this.$bvModal.hide("event-details-modal");
+      eventDataService.delete(this.event.id).then((response) => {
+        if (response.data.id == this.event.id) {
+          this.$emit("deleteEvent", this.event);
+          this.$bvModal.hide("event-details-modal");
+        }
+        // TODO success / failure toast
+      });
     },
     convertToTimeString: (date) =>
       new Date(date).toLocaleTimeString("en-UK", {

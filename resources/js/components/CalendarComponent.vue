@@ -9,7 +9,7 @@
     :blur="'2px'"
   >
     <FullCalendar ref="fullCalendar" :options="calendarOptions" />
-    <event-details-component :event="selectedEvent"></event-details-component>
+    <event-details-component :event="selectedEvent" @deleteEvent="deleteEvent"></event-details-component>
     <edit-event-component :event="selectedEvent" @updateEvent="updateEvent"></edit-event-component>
   </b-overlay>
 </template>
@@ -76,6 +76,11 @@ export default {
       calendarEvent.setProp('borderColor', event.color);
       calendarEvent.setExtendedProp('description', event.description);
       this.selectedEvent = calendarEvent;
+    },
+    deleteEvent: function(event) {
+      const calendarEvent = this.$refs.fullCalendar.getApi().getEventById(event.id);
+      calendarEvent.remove();
+      this.selectedEvent = null;
     },
     handleDateClick: function (dateClickInfo) {
       // this.selectedDate = dateClickInfo.date;

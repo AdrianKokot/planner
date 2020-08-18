@@ -154,6 +154,7 @@ export default {
           if (response.data.id == this.event.id) {
             this.$emit("updateEvent", body);
             this.$bvModal.hide("edit-event-modal");
+            // TODO success / failure toast
           }
         });
       }
