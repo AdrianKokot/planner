@@ -94,6 +94,7 @@
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 import eventDataService from "../services/event-data-service";
+import toastOptions from "../services/toast-options";
 
 const dateValidator = (value) =>
   /([0-9]{4}-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([0-1][0-9]|2[0-4]):([0-5][0-9]))/.test(
@@ -126,8 +127,17 @@ export default {
   },
   methods: {
     convertToDateTime: (datetime) =>
-      new Date(datetime).toLocaleDateString('pl', {day: '2-digit', month: '2-digit', year:'numeric'}).split('.').reverse().join('-') + 'T' +
-      new Date(datetime).toTimeString().slice(0,8),
+      new Date(datetime)
+        .toLocaleDateString("pl", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric",
+        })
+        .split(".")
+        .reverse()
+        .join("-") +
+      "T" +
+      new Date(datetime).toTimeString().slice(0, 8),
     onShow: function () {
       setTimeout(() => {
         if (this.event != null) {
@@ -142,10 +152,8 @@ export default {
           this.color = this.event.backgroundColor.slice(6, -1);
         } else if (this.date != null) {
           this.start = this.convertToDateTime(this.date);
-          console.log((new Date(this.date)).toLocaleDateString('de').split('.'))
-          console.log(this.convertToDateTime(this.date));
           this.end = this.convertToDateTime(this.date);
-          this.color = 'primary';
+          this.color = "primary";
           this.isCreateForm = true;
         }
       }, 10);
@@ -165,21 +173,38 @@ export default {
           color: `var(--${this.color})`,
         };
 
-        if(this.isCreateForm) {
+        if (this.isCreateForm) {
           eventDataService.create(body).then((response) => {
             if (response.data.id != null) {
-              this.$emit('createEvent', response.data);
+              this.$emit("createEvent", response.data);
               console.log(response.data);
               this.$bvModal.hide("event-form-modal");
-              // TODO success / failure toast
+
+              this.$bvToast.toast(
+                "Event was added successfully!",
+                toastOptions()
+              );
+            } else {
+              this.$bvToast.toast(
+                "Something went wrong",
+                toastOptions("danger")
+              );
             }
-          })
+          });
         } else {
           eventDataService.update(this.event.id, body).then((response) => {
             if (response.data.id == this.event.id) {
               this.$emit("updateEvent", body);
               this.$bvModal.hide("event-form-modal");
-              // TODO success / failure toast
+              this.$bvToast.toast(
+                "Event was saved successfully!",
+                toastOptions()
+              );
+            } else {
+              this.$bvToast.toast(
+                "Something went wrong",
+                toastOptions("danger")
+              );
             }
           });
         }

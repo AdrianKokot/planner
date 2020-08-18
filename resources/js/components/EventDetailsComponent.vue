@@ -46,6 +46,7 @@
 </template>
 <script>
 import eventDataService from "../services/event-data-service";
+import toastOptions from "../services/toast-options";
 
 export default {
   methods: {
@@ -57,8 +58,13 @@ export default {
         if (response.data.id == this.event.id) {
           this.$emit("deleteEvent", this.event);
           this.$bvModal.hide("event-details-modal");
+          this.$bvToast.toast(
+            "Event was deleted successfully!",
+            toastOptions()
+          );
+        } else {
+          this.$bvToast.toast("Something went wrong", toastOptions("danger"));
         }
-        // TODO success / failure toast
       });
     },
     convertToTimeString: (date) =>
