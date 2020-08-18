@@ -50,7 +50,7 @@ import eventDataService from "../services/event-data-service";
 export default {
   methods: {
     showEditForm: function () {
-      this.$bvModal.show("edit-event-modal");
+      this.$bvModal.show("event-form-modal");
     },
     destroy: function () {
       eventDataService.delete(this.event.id).then((response) => {

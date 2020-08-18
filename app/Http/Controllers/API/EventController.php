@@ -57,6 +57,9 @@ class EventController extends Controller
         'description' => 'nullable|string|max:255'
       ]);
 
+      if (empty($validatedData['description']))
+        $validatedData['description'] = '';
+
       $event = Event::create($validatedData);
 
       if ($event != null) {

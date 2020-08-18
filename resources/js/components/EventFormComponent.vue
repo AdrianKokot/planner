@@ -1,15 +1,16 @@
 <style lang="scss" scoped>
-::v-deep #edit-event-modal___BV_modal_header_ {
+::v-deep #event-form-modal___BV_modal_header_ {
   display: block;
   padding: 0;
   border: none;
 }
 </style>
 <template>
-  <b-modal id="edit-event-modal" @show="onShow()">
+  <b-modal id="event-form-modal" @show="onShow()">
     <template v-slot:modal-header="{ close }" modal>
       <div class="modal-header" :style="{backgroundColor: 'var(--' + color + ')', color: 'white'}">
-        <h4 class="m-0">Edit event</h4>
+        <h4 class="m-0" v-if="!isCreateForm">Edit event</h4>
+        <h4 class="m-0" v-if="isCreateForm">New event</h4>
         <b-button-close
           size="sm"
           class="m-0 p-0"
@@ -101,9 +102,10 @@ const dateValidator = (value) =>
 
 export default {
   mixins: [validationMixin],
-  props: ["event"],
+  props: ["event", "date"],
   data() {
     return {
+      isCreateForm: false,
       colors: [
         { value: "primary", text: "Default" },
         { value: "blue", text: "Blue" },
@@ -124,17 +126,29 @@ export default {
   },
   methods: {
     convertToDateTime: (datetime) =>
-      new Date(datetime).toISOString().slice(0, 11) +
-      new Date(datetime).toTimeString().slice(0, 8),
+      new Date(datetime).toLocaleDateString('pl', {day: '2-digit', month: '2-digit', year:'numeric'}).split('.').reverse().join('-') + 'T' +
+      new Date(datetime).toTimeString().slice(0,8),
     onShow: function () {
-      this.title = this.event.title;
-      this.start = this.convertToDateTime(this.event.start);
-      this.end = this.convertToDateTime(this.event.end);
-      this.description =
-        this.event.extendedProps != null
-          ? this.event.extendedProps.description ?? ""
-          : "";
-      this.color = this.event.backgroundColor.slice(6, -1);
+      setTimeout(() => {
+        if (this.event != null) {
+          this.isCreateForm = false;
+          this.title = this.event.title;
+          this.start = this.convertToDateTime(this.event.start);
+          this.end = this.convertToDateTime(this.event.end);
+          this.description =
+            this.event.extendedProps != null
+              ? this.event.extendedProps.description ?? ""
+              : "";
+          this.color = this.event.backgroundColor.slice(6, -1);
+        } else if (this.date != null) {
+          this.start = this.convertToDateTime(this.date);
+          console.log((new Date(this.date)).toLocaleDateString('de').split('.'))
+          console.log(this.convertToDateTime(this.date));
+          this.end = this.convertToDateTime(this.date);
+          this.color = 'primary';
+          this.isCreateForm = true;
+        }
+      }, 10);
     },
     submit: function () {
       this.onSubmit();
@@ -143,20 +157,32 @@ export default {
       this.$v.$touch();
       if (!this.$v.$invalid) {
         const body = {
-          id: this.event.id,
+          id: this.isCreateForm ? null : this.event.id,
           title: this.title,
           start: this.start,
           end: this.end,
           description: this.description,
           color: `var(--${this.color})`,
         };
-        eventDataService.update(this.event.id, body).then((response) => {
-          if (response.data.id == this.event.id) {
-            this.$emit("updateEvent", body);
-            this.$bvModal.hide("edit-event-modal");
-            // TODO success / failure toast
-          }
-        });
+
+        if(this.isCreateForm) {
+          eventDataService.create(body).then((response) => {
+            if (response.data.id != null) {
+              this.$emit('createEvent', response.data);
+              console.log(response.data);
+              this.$bvModal.hide("event-form-modal");
+              // TODO success / failure toast
+            }
+          })
+        } else {
+          eventDataService.update(this.event.id, body).then((response) => {
+            if (response.data.id == this.event.id) {
+              this.$emit("updateEvent", body);
+              this.$bvModal.hide("event-form-modal");
+              // TODO success / failure toast
+            }
+          });
+        }
       }
     },
   },

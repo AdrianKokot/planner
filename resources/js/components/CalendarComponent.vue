@@ -10,7 +10,7 @@
   >
     <FullCalendar ref="fullCalendar" :options="calendarOptions" />
     <event-details-component :event="selectedEvent" @deleteEvent="deleteEvent"></event-details-component>
-    <edit-event-component :event="selectedEvent" @updateEvent="updateEvent"></edit-event-component>
+    <event-form-component :date="selectedDate" @createEvent="createEvent" :event="selectedEvent" @updateEvent="updateEvent"></event-form-component>
   </b-overlay>
 </template>
 <script>
@@ -82,9 +82,13 @@ export default {
       calendarEvent.remove();
       this.selectedEvent = null;
     },
+    createEvent: function(event) {
+      this.$refs.fullCalendar.getApi().addEvent(event);
+    },
     handleDateClick: function (dateClickInfo) {
-      // this.selectedDate = dateClickInfo.date;
-      // this.$bvModal.show('new-event-modal');
+      this.selectedEvent = null;
+      this.selectedDate = new Date(dateClickInfo.date);
+      this.$bvModal.show('event-form-modal');
     },
     handleEventClick: function (eventClickInfo) {
       this.selectedEvent = eventClickInfo.event;
