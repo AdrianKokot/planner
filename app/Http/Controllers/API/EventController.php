@@ -106,6 +106,9 @@ class EventController extends Controller
         'description' => 'nullable|string|max:255'
       ]);
 
+      if (empty($validatedData['description']))
+        $validatedData['description'] = '';
+
       if ($event->update($validatedData)) {
         return response($event, 200);
       } else {
