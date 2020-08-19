@@ -21,7 +21,7 @@ class DataService {
     return param;
   }
 
-  getAll(options) {
+  getAll(options = {}) {
     const params = this.renderParamsFromOptions(options);
     return http.get(this.url + params);
   }

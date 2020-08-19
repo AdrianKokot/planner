@@ -24,6 +24,9 @@ section {
           <calendar-component></calendar-component>
         </b-tab>
         <b-tab title="Budget" lazy>Budget will be here</b-tab>
+        <b-tab title="Logs" lazy>
+          <log-component></log-component>
+        </b-tab>
       </b-tabs>
     </section>
   </div>

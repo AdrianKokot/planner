@@ -2,7 +2,7 @@ import DataService from './data-service';
 
 class EventDataService extends DataService {
   constructor() {
-    super('/api/events');
+    super('/api/event');
   }
 }
 

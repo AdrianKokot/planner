@@ -2,7 +2,7 @@
   <b-overlay
     class="px-4 pt-3 pb-5"
     id="overlay-background"
-    :show="loadingEvents"
+    :show="loadingData"
     :variant="'light'"
     spinner-variant="primary"
     :opacity=".85"
@@ -26,7 +26,7 @@ export default {
   },
   data() {
     return {
-      loadingEvents: false,
+      loadingData: false,
       selectedEvent: null,
       selectedDate: null,
       calendarOptions: {
@@ -96,7 +96,7 @@ export default {
       this.$bvModal.show("event-details-modal");
     },
     handleLoading: function(isLoading) {
-      this.loadingEvents = isLoading;
+      this.loadingData = isLoading;
     }
   },
 };

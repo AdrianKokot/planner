@@ -6,7 +6,10 @@ use App\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\Log;
+use App\LogType;
 use Exception;
+use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller
 {
@@ -48,6 +51,7 @@ class EventController extends Controller
   public function store(Request $request)
   {
     // TODO add privileges check
+    $user = Auth::user();
     if (true) {
       $validatedData = $request->validate([
         'start' => 'required|string',
@@ -57,12 +61,15 @@ class EventController extends Controller
         'description' => 'nullable|string|max:255'
       ]);
 
+      $validatedData['user_id'] = $user->id;
+
       if (empty($validatedData['description']))
         $validatedData['description'] = '';
 
       $event = Event::create($validatedData);
 
       if ($event != null) {
+        Log::log($user, $event);
         return response($event, 200);
       } else {
         return response('', 500);
@@ -110,6 +117,8 @@ class EventController extends Controller
         $validatedData['description'] = '';
 
       if ($event->update($validatedData)) {
+        Log::log(Auth::user(), $event, 'update', $validatedData);
+
         return response($event, 200);
       } else {
         return response('', 500);
@@ -129,9 +138,9 @@ class EventController extends Controller
   {
     // TODO add privileges check
     if (true) {
-      $id = $event->id;
       if ($event->delete()) {
-        return response(['id' => $id], 200);
+        Log::log(Auth::user(), $event, 'delete');
+        return response(['id' => $event->id], 200);
       }
       return response('', 500);
     }

@@ -20,6 +20,7 @@ class CreateEventsTable extends Migration
             $table->string('title', 50);
             $table->string('description', 255);
             $table->string('color', 32);
+            $table->bigInteger('user_id');
         });
     }
 
