@@ -53,8 +53,8 @@
   </b-modal>
 </template>
 <script>
-import eventDataService from "../services/event-data-service";
-import toastOptions from "../services/toast-options";
+import eventDataService from "../../services/event-data-service";
+import toastOptions from "../../services/toast-options";
 
 export default {
   data() {

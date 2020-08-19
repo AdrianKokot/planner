@@ -101,8 +101,8 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
-import eventDataService from "../services/event-data-service";
-import toastOptions from "../services/toast-options";
+import eventDataService from "../../services/event-data-service";
+import toastOptions from "../../services/toast-options";
 
 const dateValidator = (value) =>
   /([0-9]{4}-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([0-1][0-9]|2[0-4]):([0-5][0-9]))/.test(

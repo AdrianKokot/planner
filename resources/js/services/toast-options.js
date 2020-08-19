@@ -1,5 +1,5 @@
 
-function toastOptions(type = "success", title = 'default', variant = 'default', delay = 5000, toaster = 'b-toaster-bottom-center') {
+function toastOptions(type = "success", title = 'default', variant = 'default', delay = 3000, toaster = 'b-toaster-bottom-center') {
   title = title != 'default' ? title : (type == 'success' ? 'Success' : 'Error');
   variant = variant != 'default' ? variant : (type == 'success' ? 'success' : 'danger');
   return {
