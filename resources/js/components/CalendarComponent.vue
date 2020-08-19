@@ -84,6 +84,7 @@ export default {
     },
     createEvent: function(event) {
       this.$refs.fullCalendar.getApi().addEvent(event);
+      this.selectedEvent = null;
     },
     handleDateClick: function (dateClickInfo) {
       this.selectedEvent = null;

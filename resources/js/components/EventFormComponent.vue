@@ -6,7 +6,7 @@
 }
 </style>
 <template>
-  <b-modal id="event-form-modal" @show="onShow()">
+  <b-modal id="event-form-modal" @show="onShow()" @hidden="onHide()">
     <template v-slot:modal-header="{ close }" modal>
       <div class="modal-header" :style="{backgroundColor: 'var(--' + color + ')', color: 'white'}">
         <h4 class="m-0" v-if="!isCreateForm">Edit event</h4>
@@ -88,6 +88,14 @@
       <b-button variant="outline-info" @click.prevent="submit()" :disabled="$v.$invalid">Save</b-button>
       <b-button variant="outline-secondary" @click="cancel()">Cancel</b-button>
     </template>
+    <b-overlay
+      no-wrap
+      :show="showOverlay"
+      :variant="'light'"
+      spinner-variant="primary"
+      :opacity=".85"
+      :blur="'2px'"
+    ></b-overlay>
   </b-modal>
 </template>
 <script>
@@ -106,6 +114,7 @@ export default {
   props: ["event", "date"],
   data() {
     return {
+      showOverlay: false,
       isCreateForm: false,
       colors: [
         { value: "primary", text: "Default" },
@@ -139,6 +148,7 @@ export default {
       "T" +
       new Date(datetime).toTimeString().slice(0, 8),
     onShow: function () {
+      this.showOverlay = true;
       setTimeout(() => {
         if (this.event != null) {
           this.isCreateForm = false;
@@ -156,7 +166,17 @@ export default {
           this.color = "primary";
           this.isCreateForm = true;
         }
+        this.showOverlay = false;
       }, 10);
+    },
+    onHide: function () {
+      this.isCreateForm = false;
+      this.title = "";
+      this.start = this.convertToDateTime(new Date());
+      this.end = this.convertToDateTime(new Date());
+      this.description = "";
+      this.color = "default";
+      this.$v.$reset();
     },
     submit: function () {
       this.onSubmit();
@@ -173,6 +193,7 @@ export default {
           color: `var(--${this.color})`,
         };
 
+        this.showOverlay = true;
         if (this.isCreateForm) {
           eventDataService.create(body).then((response) => {
             if (response.data.id != null) {
@@ -189,6 +210,7 @@ export default {
                 "Something went wrong",
                 toastOptions("danger")
               );
+              this.showOverlay = false;
             }
           });
         } else {
@@ -205,6 +227,7 @@ export default {
                 "Something went wrong",
                 toastOptions("danger")
               );
+              this.showOverlay = false;
             }
           });
         }

@@ -42,6 +42,14 @@
       <b-button variant="outline-danger" @click="destroy()">Delete</b-button>
       <b-button variant="outline-secondary" @click="cancel()">Close</b-button>
     </template>
+    <b-overlay
+      no-wrap
+      :show="showOverlay"
+      :variant="'light'"
+      spinner-variant="primary"
+      :opacity=".85"
+      :blur="'2px'"
+    ></b-overlay>
   </b-modal>
 </template>
 <script>
@@ -49,11 +57,17 @@ import eventDataService from "../services/event-data-service";
 import toastOptions from "../services/toast-options";
 
 export default {
+  data() {
+    return {
+      showOverlay: false,
+    };
+  },
   methods: {
     showEditForm: function () {
       this.$bvModal.show("event-form-modal");
     },
     destroy: function () {
+      this.showOverlay = true;
       eventDataService.delete(this.event.id).then((response) => {
         if (response.data.id == this.event.id) {
           this.$emit("deleteEvent", this.event);
@@ -65,6 +79,7 @@ export default {
         } else {
           this.$bvToast.toast("Something went wrong", toastOptions("danger"));
         }
+        this.showOverlay = false;
       });
     },
     convertToTimeString: (date) =>
