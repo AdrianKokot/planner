@@ -103,6 +103,7 @@ import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 import eventDataService from "../../services/event-data-service";
 import toastOptions from "../../services/toast-options";
+import DateTimeConverter from "../../services/date-time-converter";
 
 const dateValidator = (value) =>
   /([0-9]{4}-(0[0-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])T([0-1][0-9]|2[0-4]):([0-5][0-9]))/.test(
@@ -135,34 +136,22 @@ export default {
     };
   },
   methods: {
-    convertToDateTime: (datetime) =>
-      new Date(datetime)
-        .toLocaleDateString("pl", {
-          day: "2-digit",
-          month: "2-digit",
-          year: "numeric",
-        })
-        .split(".")
-        .reverse()
-        .join("-") +
-      "T" +
-      new Date(datetime).toTimeString().slice(0, 8),
     onShow: function () {
       this.showOverlay = true;
       setTimeout(() => {
         if (this.event != null) {
           this.isCreateForm = false;
           this.title = this.event.title;
-          this.start = this.convertToDateTime(this.event.start);
-          this.end = this.convertToDateTime(this.event.end);
+          this.start = DateTimeConverter.convertToDateTimeString(this.event.start);
+          this.end = DateTimeConverter.convertToDateTimeString(this.event.end);
           this.description =
             this.event.extendedProps != null
               ? this.event.extendedProps.description ?? ""
               : "";
           this.color = this.event.backgroundColor.slice(6, -1);
         } else if (this.date != null) {
-          this.start = this.convertToDateTime(this.date);
-          this.end = this.convertToDateTime(this.date);
+          this.start = DateTimeConverter.convertToDateTimeString(this.date);
+          this.end = DateTimeConverter.convertToDateTimeString(this.date);
           this.color = "primary";
           this.isCreateForm = true;
         }
@@ -172,8 +161,8 @@ export default {
     onHide: function () {
       this.isCreateForm = false;
       this.title = "";
-      this.start = this.convertToDateTime(new Date());
-      this.end = this.convertToDateTime(new Date());
+      this.start = DateTimeConverter.convertToDateTimeString(new Date());
+      this.end = DateTimeConverter.convertToDateTimeString(new Date());
       this.description = "";
       this.color = "default";
       this.$v.$reset();

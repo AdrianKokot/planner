@@ -55,6 +55,7 @@
 <script>
 import eventDataService from "../../services/event-data-service";
 import toastOptions from "../../services/toast-options";
+import DateTimeConverter from "../../services/date-time-converter";
 
 export default {
   data() {
@@ -82,15 +83,6 @@ export default {
         this.showOverlay = false;
       });
     },
-    convertToTimeString: (date) =>
-      new Date(date).toLocaleTimeString("en-UK", {
-        timeZone: "Europe/Berlin",
-        hour12: false,
-        hour: "2-digit",
-        minute: "2-digit",
-      }),
-    convertToDateString: (date) =>
-      new Date(date).toLocaleDateString("pl", { timeZone: "Europe/Berlin" }),
   },
   computed: {
     expenses: function () {
@@ -110,19 +102,7 @@ export default {
         : "";
     },
     eventTime: function () {
-      if (this.event != null) {
-        const tdObj = {
-          timeStart: this.convertToTimeString(this.event.start),
-          timeEnd: this.convertToTimeString(this.event.end),
-          dateStart: this.convertToDateString(this.event.start),
-          dateEnd: this.convertToDateString(this.event.end),
-        };
-
-        return tdObj.dateStart != tdObj.dateEnd
-          ? `${tdObj.timeStart} ${tdObj.dateStart} - ${tdObj.timeEnd} ${tdObj.dateEnd}`
-          : `${tdObj.timeStart} - ${tdObj.timeEnd}, ${tdObj.dateStart}`;
-      }
-      return "";
+      return DateTimeConverter.eventTime(this.event);
     },
   },
   props: ["event"],
