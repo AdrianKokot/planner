@@ -116,8 +116,10 @@ class EventController extends Controller
       if (empty($validatedData['description']))
         $validatedData['description'] = '';
 
+      $oldEvent = clone $event;
+
       if ($event->update($validatedData)) {
-        Log::log(Auth::user(), $event, 'update', $validatedData);
+        Log::log(Auth::user(), $oldEvent, 'update', $validatedData);
 
         return response($event, 200);
       } else {

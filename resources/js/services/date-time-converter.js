@@ -10,7 +10,11 @@ class DateTimeConverter {
   }
 
   static convertToDateString(date) {
-    return new Date(date).toLocaleDateString("pl", { timeZone: "Europe/Berlin" })
+    return new Date(date).toLocaleDateString("pl", {
+      timeZone: "Europe/Berlin", day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
   }
 
   static convertToDateTimeString(datetime) {

@@ -46,6 +46,10 @@
             <div>{{ event.item.event_description }}</div>
           </div>
         </div>
+        <div class="py-2 px-3" v-if="event.item.log_description!=''">
+          <div class="font-weight-bolder">Log details</div>
+          <div v-html="event.item.log_description"></div>
+        </div>
       </template>
     </b-table>
     <b-pagination

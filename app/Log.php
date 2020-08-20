@@ -5,6 +5,8 @@ namespace App;
 use App\User;
 use App\Event;
 use App\LogType;
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 class Log extends Model
@@ -21,10 +23,23 @@ class Log extends Model
 
     $description = '';
 
-    // TODO add details? From what value to what value it was changed?
-    // if (count($updatedData) > 0) {
-    //   $description .= ucfirst($declinedName) . " " . join(', ', array_keys($updatedData));
-    // }
+    if (count($updatedData) > 0) {
+      foreach($updatedData as $key => $value) {
+        try {
+          $value = Carbon::parse($value)->format('d.m.Y H:i');
+          $event->{$key} = Carbon::parse($event->{$key})->format('d.m.Y H:i');
+        } catch (Exception $e) {
+
+        } finally {
+          if($value != $event->{$key}) {
+            $description = $description . '<div><strong>' . $key . '</strong> from "' . $event->{$key} . '" to "' . $value . '"</div>';
+          }
+        }
+      }
+      if (strlen($description) > 0) {
+        $description = "Changed:" . $description;
+      }
+    }
 
     Log::create([
       'event_id' => $event->id,
