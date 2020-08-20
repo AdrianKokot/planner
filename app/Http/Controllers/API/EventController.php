@@ -24,6 +24,7 @@ class EventController extends Controller
     if (true) {
       $startTimestamp = $request->query('start');
       $endTimestamp = $request->query('end');
+      $userId = $request->query('user_id') ?? Auth::user()->id;
 
       $events = [];
 
@@ -31,6 +32,7 @@ class EventController extends Controller
         $events = DB::table('events')
           ->where('start', '>=', $startTimestamp)
           ->where('end', '<=', $endTimestamp)
+          ->where('user_id', '=', $userId)
           ->get('*');
       } else {
         $events = DB::table('events')->get('*');
