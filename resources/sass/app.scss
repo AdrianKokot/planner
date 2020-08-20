@@ -74,3 +74,11 @@ body > main#app {
 textarea.form-control.is-invalid, textarea.form-control.is-valid {
   background-position: top calc(0.4em + 0.1875rem) right calc(0.4em + 0.1875rem + 15px) !important;
 }
+
+.btn.btn-outline-info:hover {
+  color: $white !important;
+}
+
+.table.b-table > tbody > .table-active, .table.b-table > tbody > .table-active > th, .table.b-table > tbody > .table-active > td {
+  background-color: inherit!important;
+}

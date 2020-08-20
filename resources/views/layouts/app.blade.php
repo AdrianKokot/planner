@@ -26,7 +26,7 @@
 </head>
 
 <body>
-  <main id="app" class="container-md">
+  <main id="app" class="container-xl">
     @yield('content')
   </main>
 </body>
