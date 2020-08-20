@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Log;
-use App\LogType;
-use Exception;
 use Illuminate\Support\Facades\Auth;
 
 class EventController extends Controller

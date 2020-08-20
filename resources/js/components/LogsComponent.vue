@@ -2,7 +2,6 @@
   <div>
     <b-table
       id="logs-table"
-      striped
       hover
       responsive
       selectable
@@ -13,6 +12,8 @@
       :per-page="perPage"
       :current-page="currentPage"
       @row-clicked="showDetails"
+      tbody-tr-class="text-truncate"
+      sort-icon-left
     >
       <template v-slot:table-busy>
         <div class="text-center text-primary my-2">
