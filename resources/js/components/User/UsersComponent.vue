@@ -1,5 +1,8 @@
 <template>
   <div>
+    <div class="text-right mb-2">
+      <b-button variant="outline-primary" @click="showCreateForm">Create user</b-button>
+    </div>
     <b-table
       id="users-table"
       hover
@@ -46,6 +49,7 @@
       first-number
       last-number
     ></b-pagination>
+    <user-form-component @createUser="createUser" :user="selectedUser" @updateUser="updateUser"></user-form-component>
   </div>
 </template>
 <script>
@@ -55,6 +59,7 @@ import toastOptions from "../../services/toast-options";
 export default {
   data() {
     return {
+      selectedUser: null,
       loadingData: false,
       fields: [
         {
@@ -77,22 +82,39 @@ export default {
     showDetails(row) {
       row._showDetails = !row._showDetails;
     },
-    showEditForm(user) { console.log(user) },
+    showEditForm(user) {
+      this.selectedUser = user;
+      this.$bvModal.show("user-form-modal");
+    },
+    showCreateForm() {
+      this.selectedUser = null;
+      this.$bvModal.show("user-form-modal");
+    },
     destroy(id) {
       this.loadingData = true;
-      userDataService.delete(id).then(response => {
-        if(response.data.id == id) {
-          this.users.splice(this.users.findIndex(x => x.id == id), 1);
-          this.$bvToast.toast(
-            "User was deleted successfully!",
-            toastOptions()
+      userDataService.delete(id).then((response) => {
+        if (response.data.id == id) {
+          this.users.splice(
+            this.users.findIndex((x) => x.id == id),
+            1
           );
+          this.$bvToast.toast("User was deleted successfully!", toastOptions());
         } else {
           this.$bvToast.toast("Something went wrong", toastOptions("danger"));
         }
         this.loadingData = false;
-      })
-     },
+      });
+    },
+    updateUser(user) {
+      this.users.splice(
+        this.users.findIndex((x) => x.id == user.id),
+        1,
+        user
+      );
+    },
+    createUser(user) {
+      this.users.push(user);
+    },
   },
   mounted: function () {
     this.loadingData = true;

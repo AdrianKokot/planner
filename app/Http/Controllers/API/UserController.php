@@ -84,12 +84,11 @@ class UserController extends Controller
     // TODO add privileges check
     if (true) {
       $validatedData = $request->validate([
-        'email' => 'nullable|email|unique:users,email',
-        'password' => 'nullable|confirmed|string|min:8',
+        'email' => 'nullable|email|unique:users,email,' . $user->id,
         'name' => 'nullable|string'
       ]);
 
-      $validatedData['password'] = Hash::make($validatedData['password']);
+      if($validatedData['email'] == null) unset($validatedData['email']);
 
       if ($user->update($validatedData)) {
         return response($user, 200);

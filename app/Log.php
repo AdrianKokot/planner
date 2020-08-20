@@ -18,6 +18,7 @@ class Log extends Model
 
   public static function log(User $user, Event $event, $logTypeName = 'create', $updatedData = [])
   {
+    // TODO add logging for users and budget
     $logType = LogType::where('name', $logTypeName)->first();
     $declinedName = $logType->getDeclinedName();
 

@@ -14181,7 +14181,7 @@ textarea.form-control.is-valid {
   background-position: top calc(0.4em + 0.1875rem) right calc(0.4em + 0.1875rem + 15px) !important;
 }
 
-.btn.btn-outline-info:hover {
+.btn.btn-outline-info:hover:not(:disabled) {
   color: #fff !important;
 }
 

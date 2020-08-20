@@ -85,7 +85,7 @@
     </b-form>
 
     <template v-slot:modal-footer="{ cancel }">
-      <b-button variant="outline-info" @click.prevent="submit()" :disabled="$v.$invalid">Save</b-button>
+      <b-button variant="outline-info" @click.prevent="submit()" :disabled="$v.$invalid">{{isCreateForm ? 'Create' : 'Save'}}</b-button>
       <b-button variant="outline-secondary" @click="cancel()">Cancel</b-button>
     </template>
     <b-overlay
