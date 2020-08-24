@@ -77,6 +77,8 @@
           v-model="$v.group.$model"
           :options="groups"
           :state="$v.group.$dirty ? !$v.group.$error : null"
+          value-field="id"
+          text-field="name"
         ></b-form-select>
         <b-form-invalid-feedback v-if="!$v.group.required">Group is required.</b-form-invalid-feedback>
       </b-form-group>
@@ -112,6 +114,7 @@ import {
 } from "vuelidate/lib/validators";
 import userDataService from "../../services/user-data-service";
 import toastOptions from "../../services/toast-options";
+import roleDataService from "../../services/role-data-service";
 
 export default {
   mixins: [validationMixin],
@@ -121,10 +124,7 @@ export default {
       showOverlay: false,
       isCreateForm: false,
       // TODO get groups from api
-      groups: [
-        { value: "user", text: "User" },
-        { value: "admin", text: "Administrator" },
-      ],
+      groups: [],
       name: "",
       group: "",
       email: "",
@@ -243,5 +243,10 @@ export default {
       required,
     },
   },
+  mounted: function() {
+    roleDataService.getAll().then(roles => {
+      this.groups = roles.data;
+    });
+  }
 };
 </script>

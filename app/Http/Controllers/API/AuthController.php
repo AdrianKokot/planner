@@ -30,23 +30,4 @@ class AuthController extends Controller
       'user' => $user
     ], 201);
   }
-
-  public function register(Request $request) {
-    $validatedData = $request->validate([
-      'email' => 'required|email|unique:users,email',
-      'password' => 'required|confirmed|string|min:8',
-      'name' => 'required|string'
-    ]);
-
-    $validatedData['password'] = Hash::make($validatedData['password']);
-
-    $user = User::create($validatedData);
-
-    $token = $user->createToken('access-token')->plainTextToken;
-
-    return response([
-      'token' => $token,
-      'user' => $user
-    ], 201);
-  }
 }

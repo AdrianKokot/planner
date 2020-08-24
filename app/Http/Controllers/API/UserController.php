@@ -12,6 +12,14 @@ use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+  function __construct()
+  {
+    $this->middleware('permission:user.read', ['only' => ['index', 'show']]);
+    $this->middleware('permission:user.create', ['only' => ['store']]);
+    $this->middleware('permission:user.update', ['only' => ['update']]);
+    $this->middleware('permission:user.delete', ['only' => ['destroy']]);
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -19,14 +27,8 @@ class UserController extends Controller
    */
   public function index()
   {
-    // TODO add privileges check
-    if (true) {
-      $users = DB::table('users')->get(['name', 'email', 'id']);
-
-      return response($users, 200);
-    }
-
-    return response('Access deined.', 403);
+    $users = User::with('roles')->get();
+    return response($users, 200);
   }
 
   /**
@@ -37,26 +39,21 @@ class UserController extends Controller
    */
   public function store(Request $request)
   {
-    // TODO add privileges check
-    if (true) {
-      $validatedData = $request->validate([
-        'email' => 'required|email|unique:users,email',
-        'password' => 'required|confirmed|string|min:8',
-        'name' => 'required|string'
-      ]);
+    $validatedData = $request->validate([
+      'email' => 'required|email|unique:users,email',
+      'password' => 'required|confirmed|string|min:8',
+      'name' => 'required|string'
+    ]);
 
-      $validatedData['password'] = Hash::make($validatedData['password']);
+    $validatedData['password'] = Hash::make($validatedData['password']);
 
-      $user = User::create($validatedData);
+    $user = User::create($validatedData);
 
-      if ($user != null) {
-        Log::log(Auth::user(), $user, 'user', 'create', $validatedData);
-        return response($user, 200);
-      }
-      return response('Something went wrong.', 500);
+    if ($user != null) {
+      Log::log(Auth::user(), $user, 'user', 'create', $validatedData);
+      return response($user, 200);
     }
-
-    return response('Access deined.', 403);
+    return response(['message' => 'Something went wrong.'], 500);
   }
 
   /**
@@ -67,12 +64,7 @@ class UserController extends Controller
    */
   public function show(User $user)
   {
-    // TODO add privileges check
-    if (true) {
-      return response($user, 200);
-    }
-
-    return response('Access deined.', 403);
+    return response($user, 200);
   }
 
   /**
@@ -84,26 +76,21 @@ class UserController extends Controller
    */
   public function update(Request $request, User $user)
   {
-    // TODO add privileges check
-    if (true) {
-      $validatedData = $request->validate([
-        'email' => 'nullable|email|unique:users,email,' . $user->id,
-        'name' => 'nullable|string'
-      ]);
+    $validatedData = $request->validate([
+      'email' => 'nullable|email|unique:users,email,' . $user->id,
+      'name' => 'nullable|string'
+    ]);
 
-      if($validatedData['email'] == null) unset($validatedData['email']);
+    if ($validatedData['email'] == null) unset($validatedData['email']);
 
-      $oldUser = clone $user;
+    $oldUser = clone $user;
 
-      if ($user->update($validatedData)) {
-        Log::log(Auth::user(), $oldUser, 'user', 'update', $validatedData);
-        return response($user, 200);
-      }
-
-      return response('Something went wrong.', 500);
+    if ($user->update($validatedData)) {
+      Log::log(Auth::user(), $oldUser, 'user', 'update', $validatedData);
+      return response($user, 200);
     }
 
-    return response('Access deined.', 403);
+    return response(['message' => 'Something went wrong.'], 500);
   }
 
   /**
@@ -115,15 +102,11 @@ class UserController extends Controller
   public function destroy(User $user)
   {
     // TODO add privileges check
-    if (true) {
-      if ($user->delete()) {
-        Log::log(Auth::user(), $user, 'user', 'delete');
-        return response($user, 200);
-      }
-
-      return response('Something went wrong.', 500);
+    if ($user->delete()) {
+      Log::log(Auth::user(), $user, 'user', 'delete');
+      return response($user, 200);
     }
 
-    return response('Access deined.', 403);
+    return response(['message' => 'Something went wrong.'], 500);
   }
 }
