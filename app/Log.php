@@ -17,7 +17,7 @@ class Log extends Model
   ];
 
   private static $parseToDate = ['created_at', 'updated_at', 'start', 'end'];
-  private static $hide = ['password'];
+  private static $hide = ['password', 'user_id'];
 
   /**
    * Creates new log in database about activity
@@ -47,6 +47,7 @@ class Log extends Model
           }
 
           if(in_array($key, Log::$hide)) {
+            $description = $description . '<div><strong>' . $key . '</strong></div>';
             continue;
           }
 

@@ -40,7 +40,7 @@
         >Email can be max {{$v.email.$params.maxLength.max}} characters long.</b-form-invalid-feedback>
       </b-form-group>
 
-      <b-form-group label="Password" label-for="password-input" v-if="isCreateForm">
+      <b-form-group label="Password" label-for="password-input" :description="isCreateForm ? null : 'If you don\'t want to change the password, leave this field empty.'">
         <b-input
           id="password-input"
           type="password"
@@ -56,7 +56,7 @@
         >Password can be max {{$v.password.$params.maxLength.max}} characters long.</b-form-invalid-feedback>
       </b-form-group>
 
-      <b-form-group label="Password confirmation" label-for="password_confirmation-input" v-if="isCreateForm">
+      <b-form-group label="Password confirmation" label-for="password_confirmation-input">
         <b-input
           id="password_confirmation-input"
           type="password"
@@ -71,16 +71,16 @@
         >Passwords must be identical.</b-form-invalid-feedback>
       </b-form-group>
 
-      <b-form-group label="User group" label-for="group-input">
+      <b-form-group label="User role" label-for="role-input">
         <b-form-select
-          id="group-input"
-          v-model="$v.group.$model"
-          :options="groups"
-          :state="$v.group.$dirty ? !$v.group.$error : null"
+          id="role-input"
+          v-model="$v.role.$model"
+          :options="roles"
+          :state="$v.role.$dirty ? !$v.role.$error : null"
           value-field="id"
           text-field="name"
         ></b-form-select>
-        <b-form-invalid-feedback v-if="!$v.group.required">Group is required.</b-form-invalid-feedback>
+        <b-form-invalid-feedback v-if="!$v.role.required">role is required.</b-form-invalid-feedback>
       </b-form-group>
     </b-form>
 
@@ -123,10 +123,9 @@ export default {
     return {
       showOverlay: false,
       isCreateForm: false,
-      // TODO get groups from api
-      groups: [],
+      roles: [],
       name: "",
-      group: "",
+      role: "",
       email: "",
       password: "",
       password_confirmation: "",
@@ -139,7 +138,7 @@ export default {
         if (this.user != null) {
           this.isCreateForm = false;
           this.name = this.user.name;
-          this.group = this.user.group;
+          this.role = this.user.roles[0].id;
           this.email = this.user.email;
         } else {
           this.isCreateForm = true;
@@ -151,7 +150,7 @@ export default {
     },
     onHide: function () {
       this.name = "";
-      this.group = "";
+      this.role = "";
       this.email = "";
       this.password = "";
       this.password_confirmation = "";
@@ -165,13 +164,11 @@ export default {
       if (!this.$v.$invalid) {
         const body = {
           id: this.isCreateForm ? null : this.user.id,
-          password: this.isCreateForm ? this.password : null,
-          password_confirmation: this.isCreateForm
-            ? this.password_confirmation
-            : null,
+          password: this.password,
+          password_confirmation: this.password_confirmation,
           email: this.email,
           name: this.name,
-          group: this.group,
+          role: this.role,
         };
 
         this.showOverlay = true;
@@ -239,13 +236,13 @@ export default {
       }),
       sameAsPassword: sameAs("password"),
     },
-    group: {
+    role: {
       required,
     },
   },
   mounted: function() {
     roleDataService.getAll().then(roles => {
-      this.groups = roles.data;
+      this.roles = roles.data;
     });
   }
 };

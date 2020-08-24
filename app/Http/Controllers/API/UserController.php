@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -78,14 +79,34 @@ class UserController extends Controller
   {
     $validatedData = $request->validate([
       'email' => 'nullable|email|unique:users,email,' . $user->id,
-      'name' => 'nullable|string'
+      'name' => 'nullable|string',
+      'role' => 'nullable|numeric',
+      'password' => 'nullable|string|min:8|max:32|confirmed'
     ]);
 
-    if ($validatedData['email'] == null) unset($validatedData['email']);
+    foreach($validatedData as $key => $value) {
+      if(empty($value)) {
+        unset($validatedData[$key]);
+      }
+    }
 
     $oldUser = clone $user;
 
+    if(!empty($validatedData['role'])) {
+      $role = DB::table('roles')->where('id', '=', $validatedData['role'])->first();
+      unset($validatedData['role']);
+      $oldUser->role = $user->roles()->first()->name;
+    }
+
+    if(!empty($validatedData['password'])) {
+      $validatedData['password'] = Hash::make($validatedData['password']);
+    }
+
     if ($user->update($validatedData)) {
+
+      $validatedData['role'] = $role->name;
+      $user->syncRoles([$role->name]);
+
       Log::log(Auth::user(), $oldUser, 'user', 'update', $validatedData);
       return response($user, 200);
     }
