@@ -120,6 +120,7 @@ export default {
     return {
       showOverlay: false,
       isCreateForm: false,
+      // TODO get groups from api
       groups: [
         { value: "user", text: "User" },
         { value: "admin", text: "Administrator" },
@@ -219,6 +220,7 @@ export default {
       required,
       maxLength: maxLength(255),
     },
+    // TODO check if email is already taken
     email: {
       required,
       maxLength: maxLength(255),
