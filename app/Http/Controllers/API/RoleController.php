@@ -8,6 +8,14 @@ use App\Http\Controllers\Controller;
 
 class RoleController extends Controller
 {
+  function __construct()
+  {
+    $this->middleware('permission:role.read', ['only' => ['index', 'show']]);
+    $this->middleware('permission:role.create', ['only' => ['store']]);
+    $this->middleware('permission:role.update', ['only' => ['update']]);
+    $this->middleware('permission:role.delete', ['only' => ['destroy']]);
+  }
+
   /**
    * Display a listing of the resource.
    *
@@ -15,22 +23,7 @@ class RoleController extends Controller
    */
   public function index()
   {
-    // TODO add privileges check
-    if (true) {
-      return response(Role::all(['id', 'name']));
-    }
-
-    return response('Access deined.', 403);
-  }
-
-  /**
-   * Show the form for creating a new resource.
-   *
-   * @return \Illuminate\Http\Response
-   */
-  public function create()
-  {
-    //
+    return response(Role::all(['id', 'name']));
   }
 
   /**
@@ -47,21 +40,10 @@ class RoleController extends Controller
   /**
    * Display the specified resource.
    *
-   * @param  int  $id
+   * @param  Role $role
    * @return \Illuminate\Http\Response
    */
-  public function show($id)
-  {
-    //
-  }
-
-  /**
-   * Show the form for editing the specified resource.
-   *
-   * @param  int  $id
-   * @return \Illuminate\Http\Response
-   */
-  public function edit($id)
+  public function show($role)
   {
     //
   }
@@ -70,10 +52,10 @@ class RoleController extends Controller
    * Update the specified resource in storage.
    *
    * @param  \Illuminate\Http\Request  $request
-   * @param  int  $id
+   * @param  Role $role
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $id)
+  public function update(Request $request, $role)
   {
     //
   }
@@ -81,11 +63,15 @@ class RoleController extends Controller
   /**
    * Remove the specified resource from storage.
    *
-   * @param  int  $id
+   * @param  Role $role
    * @return \Illuminate\Http\Response
    */
-  public function destroy($id)
+  public function destroy(Role $role)
   {
-    //
+    if ($role->delete()) {
+      return response($role, 200);
+    }
+
+    return response(['message' => 'Something went wrong.'], 500);
   }
 }

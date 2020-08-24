@@ -101,7 +101,6 @@ class UserController extends Controller
    */
   public function destroy(User $user)
   {
-    // TODO add privileges check
     if ($user->delete()) {
       Log::log(Auth::user(), $user, 'user', 'delete');
       return response($user, 200);
