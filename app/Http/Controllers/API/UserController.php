@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Log;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -48,6 +50,7 @@ class UserController extends Controller
       $user = User::create($validatedData);
 
       if ($user != null) {
+        Log::log(Auth::user(), $user, 'user', 'create', $validatedData);
         return response($user, 200);
       }
       return response('Something went wrong.', 500);
@@ -90,7 +93,10 @@ class UserController extends Controller
 
       if($validatedData['email'] == null) unset($validatedData['email']);
 
+      $oldUser = clone $user;
+
       if ($user->update($validatedData)) {
+        Log::log(Auth::user(), $oldUser, 'user', 'update', $validatedData);
         return response($user, 200);
       }
 
@@ -110,9 +116,8 @@ class UserController extends Controller
   {
     // TODO add privileges check
     if (true) {
-
-
       if ($user->delete()) {
+        Log::log(Auth::user(), $user, 'user', 'delete');
         return response($user, 200);
       }
 

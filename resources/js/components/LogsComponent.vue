@@ -33,23 +33,13 @@
         <span v-html="data.value"></span>
       </template>
 
-      <template v-slot:row-details="event">
-        <div class="py-2 px-3" v-if="event.item.event_end == null">
-          <div class="font-weight-bolder">Event was deleted.</div>
-        </div>
-        <div v-else>
-          <div class="py-2 px-3">
-            <div class="font-weight-bolder">Event period</div>
-            <div>{{ eventTime({start: event.item.event_start, end: event.item.event_end}) }}</div>
-          </div>
-          <div class="py-2 px-3" v-if="event.item.event_description != ''">
-            <div class="font-weight-bolder">Description</div>
-            <div>{{ event.item.event_description }}</div>
-          </div>
-        </div>
-        <div class="py-2 px-3" v-if="event.item.log_description!=''">
+      <template v-slot:row-details="log">
+        <div class="py-2 px-3" v-if="log.item.log_description != ''">
           <div class="font-weight-bolder">Log details</div>
-          <div v-html="event.item.log_description"></div>
+          <div v-html="log.item.log_description"></div>
+        </div>
+        <div class="py-2 px-3" v-else>
+          <div class="font-weight-bolder">Nothing to display</div>
         </div>
       </template>
     </b-table>

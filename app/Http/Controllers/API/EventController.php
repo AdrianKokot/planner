@@ -69,7 +69,7 @@ class EventController extends Controller
       $event = Event::create($validatedData);
 
       if ($event != null) {
-        Log::log($user, $event);
+        Log::log($user, $event, 'event', 'create', $validatedData);
         return response($event, 200);
       } else {
         return response('', 500);
@@ -119,7 +119,7 @@ class EventController extends Controller
       $oldEvent = clone $event;
 
       if ($event->update($validatedData)) {
-        Log::log(Auth::user(), $oldEvent, 'update', $validatedData);
+        Log::log(Auth::user(), $oldEvent, 'event', 'update', $validatedData);
 
         return response($event, 200);
       } else {
@@ -141,7 +141,7 @@ class EventController extends Controller
     // TODO add privileges check
     if (true) {
       if ($event->delete()) {
-        Log::log(Auth::user(), $event, 'delete');
+        Log::log(Auth::user(), $event, 'event', 'delete');
         return response(['id' => $event->id], 200);
       }
       return response('', 500);

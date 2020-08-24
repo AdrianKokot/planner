@@ -25,15 +25,8 @@ class LogController extends Controller
         ->join('log_types', function ($join) {
           $join->on('log_types.id', '=', 'logs.log_type_id');
         })
-        ->leftJoin('events', function ($join) {
-          $join->on('events.id', '=', 'logs.event_id');
-        })
         ->orderBy('logs.log_at', 'desc')
         ->get([
-          'events.start AS event_start',
-          'events.end AS event_end',
-          'events.description AS event_description',
-          'events.title AS event_title',
           'logs.log_at AS log_at',
           'logs.title AS log_title',
           'logs.description AS log_description',

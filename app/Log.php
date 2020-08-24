@@ -13,40 +13,83 @@ class Log extends Model
 {
   public $timestamps = false;
   protected $fillable = [
-    'log_at', 'event_id', 'user_id', 'log_type_id', 'title', 'description'
+    'log_at', 'user_id', 'log_type_id', 'title', 'description', 'item_table', 'item_id'
   ];
 
-  public static function log(User $user, Event $event, $logTypeName = 'create', $updatedData = [])
+  private static $parseToDate = ['created_at', 'updated_at', 'start', 'end'];
+  private static $hide = ['password'];
+
+  /**
+   * Creates new log in database about activity
+   *
+   * @param User $user User that called activity
+   * @param StdClass $item Model that was created / changed / deleted
+   * @param string $itemType Name of model type
+   * @param string $logTypeName Type of activity. Default 'create'. Accepts 'create', 'update', 'delete'.
+   * @param array $data Optional. Data in model that was changed.
+   * @return void
+   */
+  public static function log(User $user, $item, string $itemType, string $logTypeName = 'create', array $data = [])
   {
-    // TODO add logging for users and budget
     $logType = LogType::where('name', $logTypeName)->first();
     $declinedName = $logType->getDeclinedName();
 
     $description = '';
 
-    if (count($updatedData) > 0) {
-      foreach($updatedData as $key => $value) {
-        try {
-          $value = Carbon::parse($value)->format('d.m.Y H:i');
-          $event->{$key} = Carbon::parse($event->{$key})->format('d.m.Y H:i');
-        } catch (Exception $e) {
+    if (count($data) > 0) {
+      if ($logTypeName == 'update') {
 
-        } finally {
-          if($value != $event->{$key}) {
-            $description = $description . '<div><strong>' . $key . '</strong> from "' . $event->{$key} . '" to "' . $value . '"</div>';
+        foreach ($data as $key => $value) {
+
+          if (in_array($key, Log::$parseToDate)) {
+            $value = Carbon::parse($value)->format('d.m.Y H:i');
+            $item->{$key} = Carbon::parse($item->{$key})->format('d.m.Y H:i');
           }
+
+          if(in_array($key, Log::$hide)) {
+            continue;
+          }
+
+          if ($value != $item->{$key}) {
+            $description = $description . '<div><strong>' . $key . '</strong> from <em>' . $item->{$key} . '</em> to <em>' . $value . '</em></div>';
+          }
+
         }
-      }
-      if (strlen($description) > 0) {
-        $description = "Changed:" . $description;
+
+        if (strlen($description) > 0) {
+          $description = "Changed:" . $description;
+        }
+
+      } else if ($logTypeName == 'create') {
+
+        foreach ($data as $key => $value) {
+
+          if (in_array($key, Log::$parseToDate)) {
+            $value = Carbon::parse($value)->format('d.m.Y H:i');
+          }
+
+          if(in_array($key, Log::$hide)) {
+            continue;
+          }
+
+          $description = $description . '<div><strong>' . $key . '</strong>: <em>' . $value . '</em></div>';
+        }
+
+        if (strlen($description) > 0) {
+          $description = "Created with data:" . $description;
+        }
+
       }
     }
 
+    $itemTitle = !empty($item->name) ? $item->name : $item->title;
+
     Log::create([
-      'event_id' => $event->id,
+      'item_id' => $item->id,
+      'item_table' => $itemType,
       'user_id' => $user->id,
       'log_type_id' => $logType->id,
-      'title' => "$user->name <strong>$declinedName</strong> event <strong>$event->title</strong> ($event->id)",
+      'title' => "$user->name <strong>$declinedName</strong> $itemType <strong>$itemTitle</strong> ($item->id)",
       'description' => $description
     ]);
   }

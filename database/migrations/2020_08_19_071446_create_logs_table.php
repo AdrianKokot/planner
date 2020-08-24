@@ -16,10 +16,11 @@ class CreateLogsTable extends Migration
         Schema::create('logs', function (Blueprint $table) {
             $table->id();
             $table->timestamp('log_at')->useCurrent();
-            $table->bigInteger('event_id');
+            $table->bigInteger('item_id');
             $table->bigInteger('user_id');
             $table->bigInteger('log_type_id');
             $table->string('title')->nullable();
+            $table->string('item_table');
             $table->string('description', 512)->nullable();
         });
     }
