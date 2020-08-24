@@ -23,23 +23,33 @@ class DataService {
 
   getAll(options = {}) {
     const params = this.renderParamsFromOptions(options);
-    return http.get(this.url + params);
+    return http.get(this.url + params).catch(error => {
+      console.log(error, error.response);
+    });
   }
 
   get(id) {
-    return http.get(`${this.url}/${id}`);
+    return http.get(`${this.url}/${id}`).catch(error => {
+      console.log(error, error.response);
+    });
   }
 
   create(data) {
-    return http.post(this.url, data);
+    return http.post(this.url, data).catch(error => {
+      console.log(error, error.response);
+    });
   }
 
   update(id, data) {
-    return http.put(`${this.url}/${id}`, data);
+    return http.put(`${this.url}/${id}`, data).catch(error => {
+      console.log(error, error.response);
+    });
   }
 
   delete(id) {
-    return http.delete(`${this.url}/${id}`);
+    return http.delete(`${this.url}/${id}`).catch(error => {
+      console.log(error, error.response);
+    });
   }
 }
 
