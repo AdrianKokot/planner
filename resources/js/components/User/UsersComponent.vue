@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="text-right mb-2">
-      <b-button variant="outline-primary" @click="showCreateForm">Create user</b-button>
+      <b-button variant="outline-primary" @click="showCreateForm" v-if="$can('user.create')">Create user</b-button>
     </div>
     <b-table
       id="users-table"
@@ -36,8 +36,8 @@
           </div>
         </div>
         <div class="d-flex justify-content-end">
-          <b-button variant="outline-info" class="mr-2" @click="showEditForm(user.item)">Edit</b-button>
-          <b-button variant="outline-danger" @click="destroy(user.item.id)">Delete</b-button>
+          <b-button variant="outline-info" class="mr-2" @click="showEditForm(user.item)" v-if="$can('user.update')">Edit</b-button>
+          <b-button variant="outline-danger" @click="destroy(user.item.id)" v-if="$can('user.delete')">Delete</b-button>
         </div>
       </template>
     </b-table>
@@ -49,7 +49,7 @@
       first-number
       last-number
     ></b-pagination>
-    <user-form-component @createUser="createUser" :user="selectedUser" @updateUser="updateUser"></user-form-component>
+    <user-form-component v-if="$can('user.update') || $can('user.create')" @createUser="createUser" :user="selectedUser" @updateUser="updateUser"></user-form-component>
   </div>
 </template>
 <script>

@@ -1,9 +1,8 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import http from './services/http-common';
 
 Vue.use(Vuex);
-
-import http from './services/http-common';
 
 export default new Vuex.Store({
   state: {

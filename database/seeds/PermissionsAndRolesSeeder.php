@@ -19,7 +19,10 @@ class PermissionsAndRolesSeeder extends Seeder
 
     Permission::create(['name' => 'user.*']);
     Permission::create(['name' => 'log.*']);
-    Permission::create(['name' => 'user_event.*']);
+    Permission::create(['name' => 'user_event.read']);
+    Permission::create(['name' => 'user_event.create']);
+    Permission::create(['name' => 'user_event.update']);
+    Permission::create(['name' => 'user_event.delete']);
     Permission::create(['name' => 'role.*']);
     Permission::create(['name' => 'permission.*']);
     Permission::create(['name' => 'user_income.*']);
@@ -27,13 +30,15 @@ class PermissionsAndRolesSeeder extends Seeder
 
     $role = Role::create(['name' => 'user']);
 
-    $role->givePermissionTo('user_event.*');
+    $role->givePermissionTo('user_event.read');
+    $role->givePermissionTo('user_event.create');
+    $role->givePermissionTo('user_event.update');
     $role->givePermissionTo('user_income.*');
     $role->givePermissionTo('user_expense.*');
 
     $user = Factory(App\User::class)->create([
       'name' => 'Example User',
-      'email' => 'user@bbraun.com',
+      'email' => 'user@planner.com',
       'password' => Hash::make('User123')
     ]);
     $user->assignRole($role);
@@ -46,7 +51,7 @@ class PermissionsAndRolesSeeder extends Seeder
 
     $user = Factory(App\User::class)->create([
       'name' => 'Example Admin',
-      'email' => 'admin@bbraun.com',
+      'email' => 'admin@planner.com',
       'password' => Hash::make('Admin123')
     ]);
     $user->assignRole($role);

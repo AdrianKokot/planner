@@ -9,8 +9,8 @@
     :blur="'2px'"
   >
     <FullCalendar ref="fullCalendar" :options="calendarOptions" />
-    <event-details-component :event="selectedEvent" @deleteEvent="deleteEvent"></event-details-component>
-    <event-form-component :date="selectedDate" @createEvent="createEvent" :event="selectedEvent" @updateEvent="updateEvent"></event-form-component>
+    <event-details-component v-if="$can('user_event.read')" :event="selectedEvent" @deleteEvent="deleteEvent"></event-details-component>
+    <event-form-component v-if="$can('user_event.create') || $can('user_event.update')" :date="selectedDate" @createEvent="createEvent" :event="selectedEvent" @updateEvent="updateEvent"></event-form-component>
   </b-overlay>
 </template>
 <script>
@@ -98,6 +98,6 @@ export default {
     handleLoading: function(isLoading) {
       this.loadingData = isLoading;
     }
-  },
+  }
 };
 </script>

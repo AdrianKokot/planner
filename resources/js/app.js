@@ -4,14 +4,17 @@ import Vue from 'vue';
 
 import http from './services/http-common';
 
+import router from './router';
+import store from './vuex-store';
+
+import { BootstrapVue } from 'bootstrap-vue'
+Vue.use(BootstrapVue);
+
+import AccessGuard from './services/access-guard';
+Vue.mixin(AccessGuard);
 
 const files = require.context('./', true, /\.vue$/i);
 files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default));
-
-import router from './router';
-const store = require('./vuex-store').default;
-import { BootstrapVue } from 'bootstrap-vue'
-Vue.use(BootstrapVue);
 
 const app = new Vue({
     el: '#app',

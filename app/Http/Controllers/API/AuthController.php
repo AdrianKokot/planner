@@ -24,7 +24,7 @@ class AuthController extends Controller
     }
 
     $token = $user->createToken('access-token')->plainTextToken;
-
+    $user->getAllPermissions();
     return response([
       'token' => $token,
       'user' => $user

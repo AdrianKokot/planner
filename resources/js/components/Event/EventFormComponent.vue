@@ -242,7 +242,6 @@ export default {
     color: {
       required,
     },
-  },
-  computed: {},
+  }
 };
 </script>
