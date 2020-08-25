@@ -70,7 +70,7 @@
           v-model="$v.role.$model"
           :options="roles"
           :state="$v.role.$dirty ? !$v.role.$error : null"
-          value-field="id"
+          value-field="name"
           text-field="name"
         ></b-form-select>
         <b-form-invalid-feedback v-if="!$v.role.required">role is required.</b-form-invalid-feedback>
@@ -131,7 +131,7 @@ export default {
         if (this.user != null) {
           this.isCreateForm = false;
           this.name = this.user.name;
-          this.role = this.user.roles[0].id;
+          this.role = this.user.roles[0].name;
           this.email = this.user.email;
         } else {
           this.isCreateForm = true;

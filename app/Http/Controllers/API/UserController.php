@@ -43,14 +43,21 @@ class UserController extends Controller
     $validatedData = $request->validate([
       'email' => 'required|email|unique:users,email',
       'password' => 'required|confirmed|string|min:8',
-      'name' => 'required|string'
+      'name' => 'required|string',
+      'role' => 'required|string|exists:roles,name'
     ]);
 
     $validatedData['password'] = Hash::make($validatedData['password']);
 
+    $roleName = $validatedData['role'];
+    unset($validatedData['role']);
+
     $user = User::create($validatedData);
 
+
     if ($user != null) {
+      $user->syncRoles([$roleName]);
+      $validatedData['role'] = $roleName;
       Log::log(Auth::user(), $user, 'user', 'create', $validatedData);
       return response($user, 200);
     }
@@ -80,7 +87,7 @@ class UserController extends Controller
     $validatedData = $request->validate([
       'email' => 'nullable|email|unique:users,email,' . $user->id,
       'name' => 'nullable|string',
-      'role' => 'nullable|numeric',
+      'role' => 'nullable|string|exists:roles,name',
       'password' => 'nullable|string|min:8|max:32|confirmed'
     ]);
 
@@ -93,7 +100,7 @@ class UserController extends Controller
     $oldUser = clone $user;
 
     if(!empty($validatedData['role'])) {
-      $role = DB::table('roles')->where('id', '=', $validatedData['role'])->first();
+      $roleName = $validatedData['role'];
       unset($validatedData['role']);
       $oldUser->role = $user->roles()->first()->name;
     }
@@ -104,8 +111,8 @@ class UserController extends Controller
 
     if ($user->update($validatedData)) {
 
-      $validatedData['role'] = $role->name;
-      $user->syncRoles([$role->name]);
+      $validatedData['role'] = $roleName;
+      $user->syncRoles([$roleName]);
 
       Log::log(Auth::user(), $oldUser, 'user', 'update', $validatedData);
       return response($user, 200);

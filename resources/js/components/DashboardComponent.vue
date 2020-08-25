@@ -31,7 +31,7 @@ section {
         <b-tab title="Logs" lazy v-if="$can('log.read')">
           <logs-component></logs-component>
         </b-tab>
-        <b-tab title="Users" lazy v-if="$can('log.read')">
+        <b-tab title="Users" lazy v-if="$can('user.read')">
           <users-component></users-component>
         </b-tab>
         <b-tab title="Roles" lazy v-if="$can('role.read')">

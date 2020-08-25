@@ -21,6 +21,6 @@ class PermissionController extends Controller
    */
   public function index()
   {
-    return response(Permission::all());
+    return response(Permission::all()->pluck('name'));
   }
 }

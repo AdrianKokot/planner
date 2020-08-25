@@ -1,5 +1,7 @@
 <template>
   <b-modal
+  size="md"
+    scrollable
     id="role-form-modal"
     @show="onShow()"
     @hidden="onHide()"
@@ -20,14 +22,21 @@
       </b-form-group>
 
       <b-form-group label="Permissions" class="stacked checkboxes">
-        <b-form-checkbox-group
-          v-model="checkedPermissions"
-          :options="permissions"
-          name="permissions"
-          value-field="name"
-          text-field="name"
-          stacked
-        ></b-form-checkbox-group>
+        <div v-for="(permissionGroup, permissionName) in permissions" :key="permissionName" class="mb-3">
+          <div style="text-transform: capitalize" class="font-weight-bolder">{{permissionName}}</div>
+          <div class="ml-3">
+            <b-form-checkbox
+              v-model="checkedPermissions"
+              name="permissions"
+              v-for="perm in permissionGroup"
+              :key="perm"
+              :value="perm"
+              inline
+            >
+              {{perm.split('.')[1]}}
+            </b-form-checkbox>
+          </div>
+        </div>
       </b-form-group>
     </b-form>
 
@@ -158,8 +167,10 @@ export default {
   },
   mounted: function () {
     permissionDataService.getAll().then((response) => {
-      this.permissions = response.data;
-      console.log(this.permissions);
+      this.permissions = _.groupBy(response.data, function(perm) {
+          return perm.split('.')[0]
+        });
+      console.log('permissions', this.permissions);
     });
   },
 };
