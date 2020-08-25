@@ -38,8 +38,8 @@
     </div>
 
     <template v-slot:modal-footer="{ cancel }">
-      <b-button variant="outline-info" @click="showEditForm()" v-if="$can('user_event.update')">Edit</b-button>
-      <b-button variant="outline-danger" @click="destroy()" v-if="$can('user_event.delete')">Delete</b-button>
+      <b-button variant="outline-info" @click="showEditForm()" v-if="canUpdate">Edit</b-button>
+      <b-button variant="outline-danger" @click="destroy()" v-if="canDelete">Delete</b-button>
       <b-button variant="outline-secondary" @click="cancel()">Close</b-button>
     </template>
     <b-overlay
@@ -103,6 +103,15 @@ export default {
     },
     eventTime: function () {
       return DateTimeConverter.eventTime(this.event);
+    },
+    canCreate() {
+      return this.$can("user_event.create");
+    },
+    canUpdate() {
+      return this.$can("user_event.update");
+    },
+    canDelete() {
+      return this.$can("user_event.delete");
     },
   },
   props: ["event"],

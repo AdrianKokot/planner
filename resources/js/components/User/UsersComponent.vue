@@ -1,13 +1,17 @@
 <template>
   <div>
     <div class="text-right mb-2">
-      <b-button variant="outline-primary" @click="showCreateForm" v-if="$can('user.create')">Create user</b-button>
+      <b-button
+        variant="outline-primary"
+        @click="showCreateForm"
+        v-if="canCreate"
+      >Create user</b-button>
     </div>
     <b-table
       id="users-table"
       hover
       responsive
-      :selectable="$can('user.delete') || $can('user.update')"
+      :selectable="canDelete || canUpdate"
       select-mode="single"
       :busy="loadingData"
       :items="users"
@@ -36,8 +40,17 @@
           </div>
         </div>
         <div class="d-flex justify-content-end">
-          <b-button variant="outline-info" class="mr-2" @click="showEditForm(user.item)" v-if="$can('user.update')">Edit</b-button>
-          <b-button variant="outline-danger" @click="destroy(user.item.id)" v-if="$can('user.delete')">Delete</b-button>
+          <b-button
+            variant="outline-info"
+            class="mr-2"
+            @click="showEditForm(user.item)"
+            v-if="canUpdate"
+          >Edit</b-button>
+          <b-button
+            variant="outline-danger"
+            @click="destroy(user.item.id)"
+            v-if="canDelete"
+          >Delete</b-button>
         </div>
       </template>
     </b-table>
@@ -49,7 +62,12 @@
       first-number
       last-number
     ></b-pagination>
-    <user-form-component v-if="$can('user.update') || $can('user.create')" @createUser="createUser" :user="selectedUser" @updateUser="updateUser"></user-form-component>
+    <user-form-component
+      v-if="canUpdate || canCreate"
+      @createUser="createUser"
+      :user="selectedUser"
+      @updateUser="updateUser"
+    ></user-form-component>
   </div>
 </template>
 <script>
@@ -127,6 +145,15 @@ export default {
   computed: {
     rows() {
       return this.users.length;
+    },
+    canCreate() {
+      return this.$can("user.create");
+    },
+    canUpdate() {
+      return this.$can("user.update");
+    },
+    canDelete() {
+      return this.$can("user.delete");
     },
   },
 };

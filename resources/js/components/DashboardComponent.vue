@@ -27,7 +27,7 @@ section {
         <b-tab title="Calendar" lazy v-if="$can('user_event.read')">
           <calendar-component></calendar-component>
         </b-tab>
-        <b-tab title="Balance" lazy v-if="$can('user_balance.read')">Balance will be here</b-tab>
+        <b-tab title="Balance" lazy v-if="$can('user_income.read') || $can('user_expense.read')">Balance will be here</b-tab>
         <b-tab title="Logs" lazy v-if="$can('log.read')">
           <logs-component></logs-component>
         </b-tab>
