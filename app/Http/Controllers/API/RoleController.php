@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Log;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class RoleController extends Controller
 {
@@ -34,7 +36,24 @@ class RoleController extends Controller
    */
   public function store(Request $request)
   {
-    //
+    $validatedData = $request->validate([
+      'name' => 'required|string',
+      'permissions' => 'required|array',
+      'permissions.*' => 'nullable|string'
+    ]);
+
+    $role = Role::create([
+      'name' => $validatedData['name'],
+      'guard_name' => 'web'
+    ]);
+
+    $role->syncPermissions($validatedData['permissions']);
+
+    if($role->save()) {
+      Log::log(Auth::user(), $role, 'role', 'create', $validatedData);
+      return response($role, 200);
+    }
+    return response(['message' => 'Something went wrong.'], 500);
   }
 
   /**
@@ -43,9 +62,10 @@ class RoleController extends Controller
    * @param  Role $role
    * @return \Illuminate\Http\Response
    */
-  public function show($role)
+  public function show(Role $role)
   {
-    //
+    $role->getAllPermissions();
+    return response($role);
   }
 
   /**
@@ -55,9 +75,24 @@ class RoleController extends Controller
    * @param  Role $role
    * @return \Illuminate\Http\Response
    */
-  public function update(Request $request, $role)
+  public function update(Request $request, Role $role)
   {
-    //
+    $validatedData = $request->validate([
+      'name' => 'nullable|string',
+      'permissions' => 'nullable|array',
+      'permissions.*' => 'nullable|string'
+    ]);
+
+    $role->getPermissionNames();
+    $oldRole = clone $role;
+    $role->name = $validatedData['name'];
+    $role->syncPermissions($validatedData['permissions']);
+
+    if($role->save()) {
+      Log::log(Auth::user(), $oldRole, 'role', 'update', $validatedData);
+      return response($role, 200);
+    }
+    return response(['message' => 'Something went wrong.'], 500);
   }
 
   /**
@@ -69,6 +104,7 @@ class RoleController extends Controller
   public function destroy(Role $role)
   {
     if ($role->delete()) {
+      Log::log(Auth::user(), $role, 'role', 'delete');
       return response($role, 200);
     }
 

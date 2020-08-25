@@ -21,7 +21,7 @@ class CreateLogsTable extends Migration
             $table->bigInteger('log_type_id');
             $table->string('title')->nullable();
             $table->string('item_table');
-            $table->string('description', 512)->nullable();
+            $table->text('description')->nullable();
         });
     }
 

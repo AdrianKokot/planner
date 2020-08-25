@@ -1,3 +1,8 @@
+<style lang="scss" scoped>
+::v-deep ul {
+  margin-bottom: 0;
+}
+</style>
 <template>
   <div>
     <b-table

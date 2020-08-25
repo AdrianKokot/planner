@@ -1,10 +1,3 @@
-<style lang="scss" scoped>
-::v-deep #event-form-modal___BV_modal_header_ {
-  display: block;
-  padding: 0;
-  border: none;
-}
-</style>
 <template>
   <b-modal
     id="user-form-modal"

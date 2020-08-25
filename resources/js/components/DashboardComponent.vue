@@ -34,6 +34,9 @@ section {
         <b-tab title="Users" lazy v-if="$can('log.read')">
           <users-component></users-component>
         </b-tab>
+        <b-tab title="Roles" lazy v-if="$can('role.read')">
+          <roles-component></roles-component>
+        </b-tab>
       </b-tabs>
     </section>
   </div>

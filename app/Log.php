@@ -51,6 +51,11 @@ class Log extends Model
             continue;
           }
 
+          if(is_array($value) && $key == 'permissions') {
+            $value = '<ul><li>'.implode('</li><li>', $value) .'</li></ul>';
+            $item->{$key} = '<ul><li>'.implode('</li><li>', $item->{$key}->pluck('name')->all()) .'</li></ul>';
+          }
+
           if ($value != $item->{$key}) {
             $description = $description . '<div><strong>' . $key . '</strong> from <em>' . $item->{$key} . '</em> to <em>' . $value . '</em></div>';
           }
@@ -71,6 +76,10 @@ class Log extends Model
 
           if(in_array($key, Log::$hide)) {
             continue;
+          }
+
+          if(is_array($value) && $key == 'permissions') {
+            $value = '<ul><li>'.implode('</li><li>', $value) .'</li></ul>';
           }
 
           $description = $description . '<div><strong>' . $key . '</strong>: <em>' . $value . '</em></div>';

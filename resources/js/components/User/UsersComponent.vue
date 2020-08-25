@@ -7,7 +7,7 @@
       id="users-table"
       hover
       responsive
-      selectable
+      :selectable="$can('user.delete') || $can('user.update')"
       select-mode="single"
       :busy="loadingData"
       :items="users"
