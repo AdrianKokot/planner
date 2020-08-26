@@ -13,13 +13,20 @@ class DataService {
     this.url = url;
   }
 
+  /**
+   * Create string formated as query parameters for http from options object
+   * @example renderParamsFromOptions({key: value}) => "?key=value"
+   * @param {object} options object with key: value pairs
+   * @return {string} http query parameters
+   * @memberof DataService
+   */
   renderParamsFromOptions(options) {
     let param = ''
 
-    if(Object.keys(options).length > 0) {
+    if (Object.keys(options).length > 0) {
       param += '?';
 
-      for(let key in options) {
+      for (let key in options) {
         param += key + '=' + options[key] + '&';
       }
 
@@ -29,10 +36,18 @@ class DataService {
     return param;
   }
 
+  /**
+   * Get all records of resource from API
+   *
+   * @param {object} [options={}] query parameters formated as object with key: value pairs
+   * @return {Promise<AxiosResponse<any>>} promise with http response
+   * @memberof DataService
+   */
   getAll(options = {}) {
     const params = this.renderParamsFromOptions(options);
     return http.get(this.url + params).catch(error => {
       if (error.response.status == 403) {
+        console.log(error, error.response);
         show403Toast();
       } else {
         console.log(error, error.response);
@@ -40,6 +55,13 @@ class DataService {
     });
   }
 
+  /**
+   * Get record of resource with given id
+   *
+   * @param {string|number} id resource id
+   * @return {Promise<AxiosResponse<any>>} promise with http response
+   * @memberof DataService
+   */
   get(id) {
     return http.get(`${this.url}/${id}`).catch(error => {
       if (error.response.status == 403) {
@@ -50,6 +72,13 @@ class DataService {
     });
   }
 
+  /**
+   * Create new resource
+   *
+   * @param {object} data resource parameters
+   * @return {Promise<AxiosResponse<any>>} promise with http response
+   * @memberof DataService
+   */
   create(data) {
     return http.post(this.url, data).catch(error => {
       if (error.response.status == 403) {
@@ -60,6 +89,14 @@ class DataService {
     });
   }
 
+  /**
+   * Update resource with given id and data
+   *
+   * @param {string|number} id resource id
+   * @param {object} data resource parameters
+   * @return {Promise<AxiosResponse<any>>} promise with http response
+   * @memberof DataService
+   */
   update(id, data) {
     return http.put(`${this.url}/${id}`, data).catch(error => {
       if (error.response.status == 403) {
@@ -70,6 +107,13 @@ class DataService {
     });
   }
 
+  /**
+   * Delete resource with given id
+   *
+   * @param {string|number} id resource id
+   * @return {Promise<AxiosResponse<any>>} promise with http response
+   * @memberof DataService
+   */
   delete(id) {
     return http.delete(`${this.url}/${id}`).catch(error => {
       if (error.response.status == 403) {
