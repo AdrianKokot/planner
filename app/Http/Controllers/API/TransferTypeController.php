@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 
 class TransferTypeController extends Controller
 {
@@ -18,6 +19,17 @@ class TransferTypeController extends Controller
    */
   public function index()
   {
-    return response(DB::table('transfer_types')->all());
+    $data = [];
+
+    $user = Auth::user();
+
+    if($user->can('user_income.create')) {
+      array_push($data, DB::table('transfer_types')->where('name', '=', 'income')->first());
+    }
+
+    if($user->can('user_expense.create')) {
+      array_push($data, DB::table('transfer_types')->where('name', '=', 'expense')->first());
+    }
+    return response($data);
   }
 }

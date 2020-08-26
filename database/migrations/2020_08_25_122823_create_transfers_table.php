@@ -21,6 +21,7 @@ class CreateTransfersTable extends Migration
       $table->bigInteger('transfer_type_id')->nullable();
       $table->bigInteger('transfer_category_id')->nullable();
       $table->bigInteger('event_id')->nullable();
+      $table->bigInteger('user_id');
     });
   }
 

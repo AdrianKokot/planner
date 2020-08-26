@@ -24,6 +24,7 @@ class CreateTransferCategoriesTable extends Migration
     TransferCategory::create(['name' => 'education', 'color' => 'var(--cyan)']);
     TransferCategory::create(['name' => 'shopping', 'color' => 'var(--blue)']);
     TransferCategory::create(['name' => 'dining out', 'color' => 'var(--orange)']);
+    TransferCategory::create(['name' => 'salary', 'color' => 'var(--primary)']);
   }
 
   /**

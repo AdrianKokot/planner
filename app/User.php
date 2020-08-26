@@ -42,4 +42,9 @@ class User extends Authenticatable
   {
     return $this->hasMany('App\Event');
   }
+
+  public function balance()
+  {
+    return $this->hasMany('App\Transfer');
+  }
 }

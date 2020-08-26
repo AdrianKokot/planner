@@ -28,7 +28,7 @@ class EventController extends Controller
   {
     $startTimestamp = $request->query('start');
     $endTimestamp = $request->query('end');
-    $userId = $request->query('user_id') ?? Auth::user()->id;
+    $user = Auth::user();
 
     $events = [];
 
@@ -36,7 +36,7 @@ class EventController extends Controller
       $events = DB::table('events')
         ->where('start', '>=', $startTimestamp)
         ->where('end', '<=', $endTimestamp)
-        ->where('user_id', '=', $userId)
+        ->where('user_id', '=', $user->id)
         ->get('*');
     } else {
       $events = DB::table('events')->get('*');
@@ -85,7 +85,13 @@ class EventController extends Controller
    */
   public function show(Event $event)
   {
-    return response($event);
+    $user = Auth::user();
+
+    if ($event->id == $user->id) {
+      return response($event);
+    }
+
+    abort(403);
   }
 
   /**
@@ -105,18 +111,25 @@ class EventController extends Controller
       'description' => 'nullable|string|max:255'
     ]);
 
-    if (empty($validatedData['description']))
-      $validatedData['description'] = '';
+    $user = Auth::user();
 
-    $oldEvent = clone $event;
+    if ($event->user_id == $user->id) {
 
-    if ($event->update($validatedData)) {
-      Log::log(Auth::user(), $oldEvent, 'event', 'update', $validatedData);
+      if (empty($validatedData['description']))
+        $validatedData['description'] = '';
 
-      return response($event);
-    } else {
-      return response(['message' => 'Something went wrong.'], 500);
+      $oldEvent = clone $event;
+
+      if ($event->update($validatedData)) {
+        Log::log($user, $oldEvent, 'event', 'update', $validatedData);
+
+        return response($event);
+      } else {
+        return response(['message' => 'Something went wrong.'], 500);
+      }
     }
+
+    abort(403);
   }
 
   /**
@@ -127,10 +140,18 @@ class EventController extends Controller
    */
   public function destroy(Event $event)
   {
-    if ($event->delete()) {
-      Log::log(Auth::user(), $event, 'event', 'delete');
-      return response(['id' => $event->id]);
+    $user = Auth::user();
+
+    if ($event->user_id == $user->id) {
+
+      if ($event->delete()) {
+        Log::log(Auth::user(), $event, 'event', 'delete');
+        return response(['id' => $event->id]);
+      }
+
+      return response(['message' => 'Something went wrong.'], 500);
     }
-    return response(['message' => 'Something went wrong.'], 500);
+
+    abort(403);
   }
 }

@@ -32,26 +32,27 @@ class TransferController extends Controller
 
     if ($canAccess) {
       $transfers = DB::table('transfers')
-                      ->join('transfer_categories', function($join) {
-                        $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
-                      })
-                      ->join('transfer_types', function($join) {
-                        $join->on('transfers.transfer_type_id', '=', 'transfer_types.id');
-                      })
-                      ->when($transferType != 'both', function($q) use($transferType) {
-                        return $q->where('transfer_types.name', '=', $transferType);
-                      })
-                      ->orderBy('created_at', 'DESC')
-                      ->get([
-                        'transfers.name as name',
-                        'transfers.created_at as created_at',
-                        'transfers.amount as amount',
-                        'transfer_categories.name as transfer_category_name',
-                        'transfers.transfer_category_id as transfer_category_id',
-                        'transfer_types.name as transfer_type_name',
-                        'transfer_types.id as transfer_type_id',
-                        'transfer_categories.color as transfer_category_color'
-                      ]);
+        ->join('transfer_categories', function ($join) {
+          $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
+        })
+        ->join('transfer_types', function ($join) {
+          $join->on('transfers.transfer_type_id', '=', 'transfer_types.id');
+        })
+        ->when($transferType != 'both', function ($q) use ($transferType) {
+          return $q->where('transfer_types.name', '=', $transferType);
+        })
+        ->where('transfers.user_id', '=', $user->id)
+        ->orderBy('created_at', 'DESC')
+        ->get([
+          'transfers.name as name',
+          'transfers.created_at as created_at',
+          'transfers.amount as amount',
+          'transfer_categories.name as transfer_category_name',
+          'transfers.transfer_category_id as transfer_category_id',
+          'transfer_types.name as transfer_type_name',
+          'transfer_types.id as transfer_type_id',
+          'transfer_categories.color as transfer_category_color'
+        ]);
 
       return response($transfers);
     }
@@ -67,7 +68,33 @@ class TransferController extends Controller
    */
   public function store(Request $request)
   {
-    //
+    $user = Auth::user();
+
+    $validatedData = $request->validate([
+      'name' => 'required|string|max:255',
+      'created_at' => 'required|date',
+      'amount' => 'required|numeric',
+      'transfer_type_id' => 'required|numeric|exists:transfer_types,id',
+      'transfer_category_id' => 'nullable|numeric|exists:transfer_categories,id',
+      'event_id' => 'nullable|numeric|exists:events,id'
+    ]);
+
+    $transferType = DB::table('transfer_types')->where('id', '=', $validatedData['transfer_type_id']);
+
+    if (($transferType == 'income' && $user->can('user_income.create')) || ($transferType == 'expense' && $user->can('user_expense.create'))) {
+
+      $validatedData['user_id'] = $user->id;
+
+      $transfer = Transfer::create($validatedData);
+
+      if ($transfer != null) {
+        return response($transfer);
+      }
+
+      return response(['message' => 'Something went wrong.', 500]);
+    }
+
+    abort(403);
   }
 
   /**
@@ -78,7 +105,13 @@ class TransferController extends Controller
    */
   public function show(Transfer $transfer)
   {
-    //
+    $user = Auth::user();
+
+    if ($transfer->user_id == $user->id) {
+      return response($transfer);
+    }
+
+    abort(403);
   }
 
   /**
@@ -90,7 +123,32 @@ class TransferController extends Controller
    */
   public function update(Request $request, Transfer $transfer)
   {
-    //
+    $user = Auth::user();
+
+    $validatedData = $request->validate([
+      'name' => 'nullable|string|max:255',
+      'created_at' => 'nullable|date',
+      'amount' => 'nullable|numeric',
+      'transfer_type_id' => 'nullable|numeric|exists:transfer_types,id',
+      'transfer_category_id' => 'nullable|numeric|exists:transfer_categories,id',
+      'event_id' => 'nullable|numeric|exists:events,id'
+    ]);
+
+    if ($transfer->user_id == $user->id) {
+
+      $transferType = DB::table('transfer_types')->where('id', '=', $validatedData['transfer_type_id']);
+
+      if (($transferType == 'income' && $user->can('user_income.update')) || ($transferType == 'expense' && $user->can('user_expense.update'))) {
+
+        if ($transfer->update($validatedData)) {
+          return response($transfer);
+        }
+
+        return response(['message' => 'Something went wrong.', 500]);
+      }
+    }
+
+    abort(403);
   }
 
   /**
@@ -101,6 +159,17 @@ class TransferController extends Controller
    */
   public function destroy(Transfer $transfer)
   {
-    //
+    $user = Auth::user();
+
+    if ($transfer->user_id == $user->id) {
+
+      if ($transfer->delete()) {
+        return response($transfer);
+      }
+
+      return response(['message' => 'Someting went wrong.'], 500);
+    }
+
+    abort(403);
   }
 }
