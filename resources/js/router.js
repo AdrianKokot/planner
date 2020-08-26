@@ -21,6 +21,10 @@ export const routes = [
   {
     path: '/login',
     component: LoginComponent
+  },
+  {
+    path: '*',
+    redirect: '/dashboard'
   }
 ];
 
