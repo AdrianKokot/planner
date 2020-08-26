@@ -59,7 +59,7 @@ class DataService {
       } else if(error.response.status == 401) {
         handle401();
       } else {
-        console.log(error, error.response);
+        return error.response;
       }
     });
   }
@@ -78,7 +78,7 @@ class DataService {
       } else if(error.response.status == 401) {
         handle401();
       } else {
-        console.log(error, error.response);
+        return error.response;
       }
     });
   }
@@ -97,7 +97,7 @@ class DataService {
       } else if(error.response.status == 401) {
         handle401();
       } else {
-        console.log(error, error.response);
+        return error.response;
       }
     });
   }
@@ -117,7 +117,7 @@ class DataService {
       } else if(error.response.status == 401) {
         handle401();
       } else {
-        console.log(error, error.response);
+        return error.response;
       }
     });
   }
@@ -136,7 +136,7 @@ class DataService {
       } else if(error.response.status == 401) {
         handle401();
       } else {
-        console.log(error, error.response);
+        return error.response;
       }
     });
   }

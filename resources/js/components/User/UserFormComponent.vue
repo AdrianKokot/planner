@@ -23,11 +23,13 @@
         <b-input
           id="email-input"
           type="email"
+          @input="onChange('email')"
           v-model="$v.email.$model"
           :state="$v.email.$dirty ? !$v.email.$error : null"
         ></b-input>
         <b-form-invalid-feedback v-if="!$v.email.required">Email is required.</b-form-invalid-feedback>
         <b-form-invalid-feedback v-if="!$v.email.email">Email is not valid.</b-form-invalid-feedback>
+        <b-form-invalid-feedback v-if="!$v.email.alreadyTaken">Email has been already taken.</b-form-invalid-feedback>
         <b-form-invalid-feedback
           v-if="!$v.email.maxLength"
         >Email can be max {{$v.email.$params.maxLength.max}} characters long.</b-form-invalid-feedback>
@@ -114,6 +116,7 @@ export default {
   props: ["user"],
   data() {
     return {
+      errors: [],
       showOverlay: false,
       isCreateForm: false,
       roles: [],
@@ -125,6 +128,11 @@ export default {
     };
   },
   methods: {
+    onChange: function(field) {
+      if (this.errors[field] != null) {
+        this.errors[field] = null;
+      }
+    },
     onShow: function () {
       this.showOverlay = true;
       setTimeout(() => {
@@ -167,7 +175,12 @@ export default {
         this.showOverlay = true;
         if (this.isCreateForm) {
           userDataService.create(body).then((response) => {
-            if (response.data.id != null) {
+            if(response.status == 422) {
+
+              this.errors = response.data.errors;
+
+            } else if (response.status == 200) {
+
               this.$emit("createUser", response.data);
 
               this.$bvModal.hide("user-form-modal");
@@ -181,8 +194,8 @@ export default {
                 "Something went wrong",
                 toastOptions("danger")
               );
-              this.showOverlay = false;
             }
+            this.showOverlay = false;
           });
         } else {
           userDataService.update(body.id, body).then((response) => {
@@ -210,11 +223,11 @@ export default {
       required,
       maxLength: maxLength(255),
     },
-    // TODO check if email is already taken
     email: {
       required,
       maxLength: maxLength(255),
       email,
+      alreadyTaken: function () { return this.errors.email != "The email has already been taken."}
     },
     password: {
       required: requiredIf(function () {
