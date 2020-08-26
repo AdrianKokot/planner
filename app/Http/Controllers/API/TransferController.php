@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\API;
 
+use App\Log;
 use App\Transfer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -88,6 +89,7 @@ class TransferController extends Controller
       $transfer = Transfer::create($validatedData);
 
       if ($transfer != null) {
+        Log::log($user, $transfer, 'transaction', 'create', $validatedData);
         return response($transfer);
       }
 
@@ -140,7 +142,10 @@ class TransferController extends Controller
 
       if (($transferType == 'income' && $user->can('user_income.update')) || ($transferType == 'expense' && $user->can('user_expense.update'))) {
 
+        $oldTransfer = clone $transfer;
+
         if ($transfer->update($validatedData)) {
+          Log::log($user, $oldTransfer, 'transaction', 'update', $validatedData);
           return response($transfer);
         }
 
@@ -164,6 +169,7 @@ class TransferController extends Controller
     if ($transfer->user_id == $user->id) {
 
       if ($transfer->delete()) {
+        Log::log($user, $transfer, 'transaction', 'delete');
         return response($transfer);
       }
 
