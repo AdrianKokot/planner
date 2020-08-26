@@ -5,6 +5,17 @@
 </style>
 <template>
   <div>
+    <div class="d-flex flex-column flex-sm-row">
+      <b-pagination
+        class="mr-sm-0 mx-auto mb-3"
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        aria-controls="logs-table"
+        first-number
+        last-number
+      ></b-pagination>
+    </div>
     <b-table
       id="logs-table"
       hover
@@ -48,14 +59,6 @@
         </div>
       </template>
     </b-table>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="logs-table"
-      first-number
-      last-number
-    ></b-pagination>
   </div>
 </template>
 <script>

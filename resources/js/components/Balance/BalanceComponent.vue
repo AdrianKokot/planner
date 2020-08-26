@@ -1,14 +1,38 @@
 <style lang="scss" scoped>
 .badge {
-  font-size: .8rem;
+  font-size: 0.8rem;
   display: inline;
-  padding-right: .5rem;
-  padding-left: .5rem;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
 }
 </style>
 <template>
   <div>
+    <div class="d-flex flex-column flex-sm-row">
+      <b-button
+        variant="outline-primary"
+        class="mb-3"
+        @click="showCreateForm"
+        v-if="canCreateExpense || canCreateIncome"
+      >New transaction</b-button>
+      <b-form-select
+        v-model="timePeriod"
+        class="ml-sm-2 bg-transparent w-auto mb-3 text-primary border-primary"
+        :options="timePeriodOptions"
+        @change="onPeriodChange"
+      ></b-form-select>
+      <b-pagination
+        class="mr-sm-0 mx-auto"
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        aria-controls="balance-table"
+        first-number
+        last-number
+      ></b-pagination>
+    </div>
     <b-table
+      id="balance-table"
       hover
       responsive
       :selectable="true"
@@ -34,7 +58,10 @@
       </template>
 
       <template v-slot:cell(transfer_category_name)="data">
-        <span class="badge text-white" :style="{backgroundColor: data.item.transfer_category_color}">{{ data.value }}</span>
+        <span
+          class="badge text-white"
+          :style="{backgroundColor: data.item.transfer_category_color}"
+        >{{ data.value }}</span>
       </template>
 
       <template v-slot:table-busy>
@@ -49,14 +76,9 @@
         </pre>
       </template>
     </b-table>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls
-      first-number
-      last-number
-    ></b-pagination>
+    <div class="text-center">
+      <b-link variant="primary" @click="loadMore">Load more</b-link>
+    </div>
   </div>
 </template>
 <script>
@@ -67,6 +89,11 @@ export default {
   data() {
     return {
       loadingData: false,
+      timePeriodOptions: [
+        { value: 1, text: "last month" },
+        { value: 12, text: "last year" },
+      ],
+      timePeriod: 1,
       fields: [
         {
           key: "created_at",
@@ -95,6 +122,25 @@ export default {
     };
   },
   methods: {
+    loadMore() {
+      this.timePerdiod += 1;
+      this.onPeriodChange();
+    },
+    onPeriodChange() {
+      this.loadingData = true;
+      const date = new Date();
+      balanceDataService
+        .getAll({
+          start: new Date(
+            date.setMonth(date.getMonth() - this.timePeriod)
+          ).toISOString(),
+        })
+        .then((response) => {
+          console.log(response.data);
+          this.balance = response.data;
+          this.loadingData = false;
+        });
+    },
     showDetails(row) {
       row._showDetails = !row._showDetails;
     },
@@ -128,13 +174,7 @@ export default {
     },
   },
   mounted: function () {
-    this.loadingData = true;
-
-    balanceDataService.getAll().then((response) => {
-      console.log(response.data);
-      this.balance = response.data;
-      this.loadingData = false;
-    });
+    this.onPeriodChange();
   },
   computed: {
     rows() {

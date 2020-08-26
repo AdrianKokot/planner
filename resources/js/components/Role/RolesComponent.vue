@@ -1,7 +1,21 @@
 <template>
   <div>
-    <div class="text-right mb-2">
-      <b-button variant="outline-primary" @click="showCreateForm" v-if="canCreate">Create role</b-button>
+    <div class="d-flex flex-column flex-sm-row">
+      <b-button
+        variant="outline-primary"
+        class="mb-3"
+        @click="showCreateForm"
+        v-if="canCreate"
+      >New role</b-button>
+      <b-pagination
+        class="mr-sm-0 mx-auto"
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        aria-controls
+        first-number
+        last-number
+      ></b-pagination>
     </div>
     <b-table
       id="roles-table"
@@ -36,14 +50,6 @@
         </div>
       </template>
     </b-table>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls
-      first-number
-      last-number
-    ></b-pagination>
     <role-form-component
       v-if="canUpdate || canCreate"
       @createRole="createRole"

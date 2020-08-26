@@ -1,7 +1,16 @@
 <template>
   <div>
-    <div class="text-right mb-2">
-      <b-button variant="outline-primary" @click="showCreateForm" v-if="canCreate">Create user</b-button>
+    <div class="d-flex flex-column flex-sm-row">
+      <b-button variant="outline-primary" class="mb-3" @click="showCreateForm" v-if="canCreate">New user</b-button>
+      <b-pagination
+        class="mr-sm-0 mx-auto"
+        v-model="currentPage"
+        :total-rows="rows"
+        :per-page="perPage"
+        aria-controls="users-table"
+        first-number
+        last-number
+      ></b-pagination>
     </div>
     <b-table
       id="users-table"
@@ -46,14 +55,6 @@
         </div>
       </template>
     </b-table>
-    <b-pagination
-      v-model="currentPage"
-      :total-rows="rows"
-      :per-page="perPage"
-      aria-controls="users-table"
-      first-number
-      last-number
-    ></b-pagination>
     <user-form-component
       v-if="canUpdate || canCreate"
       @createUser="createUser"

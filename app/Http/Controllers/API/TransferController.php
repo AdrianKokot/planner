@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Log;
 use App\Transfer;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
@@ -27,6 +28,8 @@ class TransferController extends Controller
   {
     $transferType = $request->query('type') ?? 'both';
 
+    $start = $request->query('start') ?? null;
+
     $user = Auth::user();
 
     $canAccess = $user->can('user_income.read') ? ($user->can('user_expense.read') ? true : ($transferType == 'income')) : ($user->can('user_expense.read') ? $transferType == 'expense' : false);
@@ -43,6 +46,9 @@ class TransferController extends Controller
           return $q->where('transfer_types.name', '=', $transferType);
         })
         ->where('transfers.user_id', '=', $user->id)
+        ->when($start != null, function($q) use ($start) {
+          return $q->where('created_at', '>=', Carbon::parse($start));
+        })
         ->orderBy('created_at', 'DESC')
         ->get([
           'transfers.name as name',
