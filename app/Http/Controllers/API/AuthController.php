@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
@@ -29,5 +30,11 @@ class AuthController extends Controller
       'token' => $token,
       'user' => $user
     ], 201);
+  }
+
+  public function logout(Request $request) {
+    $user = Auth::user();
+    // Revoke current user token
+    $user->tokens()->where('id', $user->currentAccessToken()->id)->delete();
   }
 }

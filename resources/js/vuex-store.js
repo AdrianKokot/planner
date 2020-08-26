@@ -17,7 +17,9 @@ export default new Vuex.Store({
     },
     clearUserData() {
       localStorage.removeItem('user')
-      location.reload()
+      http.post('/logout').then(res => {
+      });
+      location.reload();
     },
     handleError(err) {
       throw err;

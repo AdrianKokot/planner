@@ -41,6 +41,7 @@ class TransferController extends Controller
                       ->when($transferType != 'both', function($q) use($transferType) {
                         return $q->where('transfer_types.name', '=', $transferType);
                       })
+                      ->orderBy('created_at', 'DESC')
                       ->get([
                         'transfers.name as name',
                         'transfers.created_at as created_at',

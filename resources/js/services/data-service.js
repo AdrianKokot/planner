@@ -2,11 +2,19 @@ import http from "./http-common";
 import toastOptions from "./toast-options";
 import app from '../app';
 
-function show403Toast() {
+function handle403() {
   app.$bvToast.toast(
     "You don\'t have access to perform this action.",
     toastOptions('danger')
   );
+}
+
+function handle401() {
+  app.$bvToast.toast(
+    "Your session has timed out. Please login again.",
+    toastOptions('danger')
+  );
+  // app.$store.dispatch('logout');
 }
 class DataService {
   constructor(url) {
@@ -47,8 +55,9 @@ class DataService {
     const params = this.renderParamsFromOptions(options);
     return http.get(this.url + params).catch(error => {
       if (error.response.status == 403) {
-        console.log(error, error.response);
-        show403Toast();
+        handle403();
+      } else if(error.response.status == 401) {
+        handle401();
       } else {
         console.log(error, error.response);
       }
@@ -65,7 +74,9 @@ class DataService {
   get(id) {
     return http.get(`${this.url}/${id}`).catch(error => {
       if (error.response.status == 403) {
-        show403Toast();
+        handle403();
+      } else if(error.response.status == 401) {
+        handle401();
       } else {
         console.log(error, error.response);
       }
@@ -82,7 +93,9 @@ class DataService {
   create(data) {
     return http.post(this.url, data).catch(error => {
       if (error.response.status == 403) {
-        show403Toast();
+        handle403();
+      } else if(error.response.status == 401) {
+        handle401();
       } else {
         console.log(error, error.response);
       }
@@ -100,7 +113,9 @@ class DataService {
   update(id, data) {
     return http.put(`${this.url}/${id}`, data).catch(error => {
       if (error.response.status == 403) {
-        show403Toast();
+        handle403();
+      } else if(error.response.status == 401) {
+        handle401();
       } else {
         console.log(error, error.response);
       }
@@ -117,7 +132,9 @@ class DataService {
   delete(id) {
     return http.delete(`${this.url}/${id}`).catch(error => {
       if (error.response.status == 403) {
-        show403Toast();
+        handle403();
+      } else if(error.response.status == 401) {
+        handle401();
       } else {
         console.log(error, error.response);
       }
