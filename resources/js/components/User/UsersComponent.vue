@@ -43,6 +43,10 @@
             <div class="font-weight-bolder">Email</div>
             <div>{{ user.item.email }}</div>
           </div>
+          <div class="py-2 px-3">
+            <div class="font-weight-bolder">Role</div>
+            <div>{{ user.item.roles[0].name }}</div>
+          </div>
         </div>
         <div class="d-flex justify-content-end">
           <b-button
@@ -82,6 +86,11 @@ export default {
           key: "email",
           sortable: true,
           label: "Email",
+        },
+        {
+          key: "roles[0].name",
+          sortable: true,
+          label: "Role",
         },
       ],
       users: [],
