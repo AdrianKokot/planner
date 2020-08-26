@@ -61,7 +61,7 @@
 <script>
 import { validationMixin } from "vuelidate";
 import { required, maxLength, minLength } from "vuelidate/lib/validators";
-import toastOptions from "../../services/toast-options";
+import { toastOptions } from "../../services/toast-options";
 import roleDataService from "../../services/role-data-service";
 import permissionDataService from "../../services/permission-data-service";
 

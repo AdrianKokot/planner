@@ -60,7 +60,7 @@
   </div>
 </template>
 <script>
-import toastOptions from "../../services/toast-options";
+import { toastOptions } from "../../services/toast-options";
 import balanceDataService from "../../services/balance-service";
 
 export default {

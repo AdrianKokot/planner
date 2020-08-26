@@ -54,7 +54,7 @@
 </template>
 <script>
 import eventDataService from "../../services/event-data-service";
-import toastOptions from "../../services/toast-options";
+import { toastOptions, msgBoxOptions } from "../../services/toast-options";
 import DateTimeConverter from "../../services/date-time-converter";
 
 export default {
@@ -68,20 +68,32 @@ export default {
       this.$bvModal.show("event-form-modal");
     },
     destroy: function () {
-      this.showOverlay = true;
-      eventDataService.delete(this.event.id).then((response) => {
-        if (response.data.id == this.event.id) {
-          this.$emit("deleteEvent", this.event);
-          this.$bvModal.hide("event-details-modal");
-          this.$bvToast.toast(
-            "Event was deleted successfully!",
-            toastOptions()
-          );
-        } else {
-          this.$bvToast.toast("Something went wrong", toastOptions("danger"));
-        }
-        this.showOverlay = false;
-      });
+      this.$bvModal
+        .msgBoxConfirm(
+          "Are you sure you want to delete this event?",
+          msgBoxOptions()
+        )
+        .then((value) => {
+          if (value == true) {
+            this.showOverlay = true;
+            eventDataService.delete(this.event.id).then((response) => {
+              if (response.data.id == this.event.id) {
+                this.$emit("deleteEvent", this.event);
+                this.$bvModal.hide("event-details-modal");
+                this.$bvToast.toast(
+                  "Event was deleted successfully!",
+                  toastOptions()
+                );
+              } else {
+                this.$bvToast.toast(
+                  "Something went wrong",
+                  toastOptions("danger")
+                );
+              }
+              this.showOverlay = false;
+            });
+          }
+        });
     },
   },
   computed: {

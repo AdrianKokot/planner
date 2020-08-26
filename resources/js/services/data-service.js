@@ -1,5 +1,5 @@
 import http from "./http-common";
-import toastOptions from "./toast-options";
+import { toastOptions } from "./toast-options";
 import app from '../app';
 
 function handle403() {

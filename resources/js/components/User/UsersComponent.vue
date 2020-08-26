@@ -1,11 +1,7 @@
 <template>
   <div>
     <div class="text-right mb-2">
-      <b-button
-        variant="outline-primary"
-        @click="showCreateForm"
-        v-if="canCreate"
-      >Create user</b-button>
+      <b-button variant="outline-primary" @click="showCreateForm" v-if="canCreate">Create user</b-button>
     </div>
     <b-table
       id="users-table"
@@ -46,11 +42,7 @@
             @click="showEditForm(user.item)"
             v-if="canUpdate"
           >Edit</b-button>
-          <b-button
-            variant="outline-danger"
-            @click="destroy(user.item.id)"
-            v-if="canDelete"
-          >Delete</b-button>
+          <b-button variant="outline-danger" @click="destroy(user.item.id)" v-if="canDelete">Delete</b-button>
         </div>
       </template>
     </b-table>
@@ -72,7 +64,7 @@
 </template>
 <script>
 import userDataService from "../../services/user-data-service";
-import toastOptions from "../../services/toast-options";
+import { toastOptions, msgBoxOptions } from "../../services/toast-options";
 
 export default {
   data() {
@@ -109,19 +101,34 @@ export default {
       this.$bvModal.show("user-form-modal");
     },
     destroy(id) {
-      this.loadingData = true;
-      userDataService.delete(id).then((response) => {
-        if (response.data.id == id) {
-          this.users.splice(
-            this.users.findIndex((x) => x.id == id),
-            1
-          );
-          this.$bvToast.toast("User was deleted successfully!", toastOptions());
-        } else {
-          this.$bvToast.toast("Something went wrong", toastOptions("danger"));
-        }
-        this.loadingData = false;
-      });
+      this.$bvModal
+        .msgBoxConfirm(
+          "Are you sure you want to delete this user?",
+          msgBoxOptions()
+        )
+        .then((value) => {
+          if (value == true) {
+            this.loadingData = true;
+            userDataService.delete(id).then((response) => {
+              if (response.data.id == id) {
+                this.users.splice(
+                  this.users.findIndex((x) => x.id == id),
+                  1
+                );
+                this.$bvToast.toast(
+                  "User was deleted successfully!",
+                  toastOptions()
+                );
+              } else {
+                this.$bvToast.toast(
+                  "Something went wrong",
+                  toastOptions("danger")
+                );
+              }
+              this.loadingData = false;
+            });
+          }
+        });
     },
     updateUser(user) {
       this.users.splice(

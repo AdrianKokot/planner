@@ -108,7 +108,7 @@ import {
   requiredIf,
 } from "vuelidate/lib/validators";
 import userDataService from "../../services/user-data-service";
-import toastOptions from "../../services/toast-options";
+import { toastOptions } from "../../services/toast-options";
 import roleDataService from "../../services/role-data-service";
 
 export default {

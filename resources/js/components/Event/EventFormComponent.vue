@@ -102,7 +102,7 @@
 import { validationMixin } from "vuelidate";
 import { required, maxLength } from "vuelidate/lib/validators";
 import eventDataService from "../../services/event-data-service";
-import toastOptions from "../../services/toast-options";
+import { toastOptions } from "../../services/toast-options";
 import DateTimeConverter from "../../services/date-time-converter";
 
 const dateValidator = (value) =>
