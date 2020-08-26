@@ -55,8 +55,8 @@ class EventController extends Controller
   {
     $user = Auth::user();
     $validatedData = $request->validate([
-      'start' => 'required|string',
-      'end' => 'required|string',
+      'start' => 'required|date',
+      'end' => 'required|date',
       'title' => 'required|string|max:50',
       'color' => 'required|string|max:32',
       'description' => 'nullable|string|max:255'
