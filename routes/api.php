@@ -9,5 +9,7 @@ Route::middleware('auth:sanctum')->group(function() {
   Route::apiResource('/permission', 'API\PermissionController');
   Route::apiResource('/role', 'API\RoleController');
   Route::apiResource('/transfer', 'API\TransferController');
+  Route::get('/transfer_type', 'API\TransferTypeController@index');
+  Route::apiResource('/transfer_category', 'API\TransferCategoryController');
 });
 

@@ -42,7 +42,7 @@ class EventController extends Controller
       $events = DB::table('events')->get('*');
     }
 
-    return response($events, 200);
+    return response($events);
   }
 
   /**
@@ -71,7 +71,7 @@ class EventController extends Controller
 
     if ($event != null) {
       Log::log($user, $event, 'event', 'create', $validatedData);
-      return response($event, 200);
+      return response($event);
     } else {
       return response(['message' => 'Something went wrong.'], 500);
     }
@@ -85,7 +85,7 @@ class EventController extends Controller
    */
   public function show(Event $event)
   {
-    return response($event, 200);
+    return response($event);
   }
 
   /**
@@ -113,7 +113,7 @@ class EventController extends Controller
     if ($event->update($validatedData)) {
       Log::log(Auth::user(), $oldEvent, 'event', 'update', $validatedData);
 
-      return response($event, 200);
+      return response($event);
     } else {
       return response(['message' => 'Something went wrong.'], 500);
     }
@@ -129,7 +129,7 @@ class EventController extends Controller
   {
     if ($event->delete()) {
       Log::log(Auth::user(), $event, 'event', 'delete');
-      return response(['id' => $event->id], 200);
+      return response(['id' => $event->id]);
     }
     return response(['message' => 'Something went wrong.'], 500);
   }

@@ -51,7 +51,7 @@ class RoleController extends Controller
 
     if($role->save()) {
       Log::log(Auth::user(), $role, 'role', 'create', $validatedData);
-      return response($role, 200);
+      return response($role);
     }
     return response(['message' => 'Something went wrong.'], 500);
   }
@@ -90,7 +90,7 @@ class RoleController extends Controller
 
     if($role->save()) {
       Log::log(Auth::user(), $oldRole, 'role', 'update', $validatedData);
-      return response($role, 200);
+      return response($role);
     }
     return response(['message' => 'Something went wrong.'], 500);
   }
@@ -105,7 +105,7 @@ class RoleController extends Controller
   {
     if ($role->delete()) {
       Log::log(Auth::user(), $role, 'role', 'delete');
-      return response($role, 200);
+      return response($role);
     }
 
     return response(['message' => 'Something went wrong.'], 500);

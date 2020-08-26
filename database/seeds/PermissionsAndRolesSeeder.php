@@ -45,6 +45,11 @@ class PermissionsAndRolesSeeder extends Seeder
     Permission::create(['name' => 'user_expense.create']);
     Permission::create(['name' => 'user_expense.update']);
     Permission::create(['name' => 'user_expense.delete']);
+    Permission::create(['name' => 'transfer_type.read']);
+    Permission::create(['name' => 'transfer_category.read']);
+    Permission::create(['name' => 'transfer_category.create']);
+    Permission::create(['name' => 'transfer_category.update']);
+    Permission::create(['name' => 'transfer_category.delete']);
 
     $role = Role::create(['name' => 'User']);
 
@@ -60,6 +65,8 @@ class PermissionsAndRolesSeeder extends Seeder
     $role->givePermissionTo('user_expense.create');
     $role->givePermissionTo('user_expense.update');
     $role->givePermissionTo('user_expense.delete');
+    $role->givePermissionTo('transfer_type.read');
+    $role->givePermissionTo('transfer_category.read');
 
     $user = Factory(App\User::class)->create([
       'name' => 'Example User',
@@ -79,6 +86,10 @@ class PermissionsAndRolesSeeder extends Seeder
     $role->givePermissionTo('user.create');
     $role->givePermissionTo('user.update');
     $role->givePermissionTo('user.delete');
+    $role->givePermissionTo('transfer_category.read');
+    $role->givePermissionTo('transfer_category.create');
+    $role->givePermissionTo('transfer_category.update');
+    $role->givePermissionTo('transfer_category.delete');
 
     $user = Factory(App\User::class)->create([
       'name' => 'Example Admin',

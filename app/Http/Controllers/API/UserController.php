@@ -5,11 +5,9 @@ namespace App\Http\Controllers\API;
 use App\Log;
 use App\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -29,7 +27,7 @@ class UserController extends Controller
   public function index()
   {
     $users = User::with('roles')->get();
-    return response($users, 200);
+    return response($users);
   }
 
   /**
@@ -59,7 +57,7 @@ class UserController extends Controller
       $user->syncRoles([$roleName]);
       $validatedData['role'] = $roleName;
       Log::log(Auth::user(), $user, 'user', 'create', $validatedData);
-      return response($user, 200);
+      return response($user);
     }
     return response(['message' => 'Something went wrong.'], 500);
   }
@@ -72,7 +70,7 @@ class UserController extends Controller
    */
   public function show(User $user)
   {
-    return response($user, 200);
+    return response($user);
   }
 
   /**
@@ -115,7 +113,7 @@ class UserController extends Controller
       $user->syncRoles([$roleName]);
 
       Log::log(Auth::user(), $oldUser, 'user', 'update', $validatedData);
-      return response($user, 200);
+      return response($user);
     }
 
     return response(['message' => 'Something went wrong.'], 500);
@@ -131,7 +129,7 @@ class UserController extends Controller
   {
     if ($user->delete()) {
       Log::log(Auth::user(), $user, 'user', 'delete');
-      return response($user, 200);
+      return response($user);
     }
 
     return response(['message' => 'Something went wrong.'], 500);

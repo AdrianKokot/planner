@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Log;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 
@@ -11,7 +9,7 @@ class LogController extends Controller
 {
   function __construct()
   {
-    $this->middleware('permission:log.read', ['only' => ['index', 'show']]);
+    $this->middleware('permission:log.read', ['only' => ['index']]);
   }
 
   /**
@@ -37,6 +35,6 @@ class LogController extends Controller
         DB::raw("CONCAT(users.name, ' (<strong>', users.email, '</strong>)') AS user_name")
       ]);
 
-    return response($logs, 200);
+    return response($logs);
   }
 }
