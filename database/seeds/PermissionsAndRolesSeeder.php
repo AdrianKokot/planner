@@ -22,9 +22,9 @@ class PermissionsAndRolesSeeder extends Seeder
     Permission::create(['name' => 'user.update']);
     Permission::create(['name' => 'user.delete']);
     Permission::create(['name' => 'log.read']);
-    Permission::create(['name' => 'log.create']);
-    Permission::create(['name' => 'log.update']);
-    Permission::create(['name' => 'log.delete']);
+    // Permission::create(['name' => 'log.create']);
+    // Permission::create(['name' => 'log.update']);
+    // Permission::create(['name' => 'log.delete']);
     Permission::create(['name' => 'user_event.read']);
     Permission::create(['name' => 'user_event.create']);
     Permission::create(['name' => 'user_event.update']);
@@ -34,9 +34,9 @@ class PermissionsAndRolesSeeder extends Seeder
     Permission::create(['name' => 'role.update']);
     Permission::create(['name' => 'role.delete']);
     Permission::create(['name' => 'permission.read']);
-    Permission::create(['name' => 'permission.create']);
-    Permission::create(['name' => 'permission.update']);
-    Permission::create(['name' => 'permission.delete']);
+    // Permission::create(['name' => 'permission.create']);
+    // Permission::create(['name' => 'permission.update']);
+    // Permission::create(['name' => 'permission.delete']);
     Permission::create(['name' => 'user_income.read']);
     Permission::create(['name' => 'user_income.create']);
     Permission::create(['name' => 'user_income.update']);
@@ -70,8 +70,6 @@ class PermissionsAndRolesSeeder extends Seeder
 
     $role = Role::create(['name' => 'Administrator']);
     $role->givePermissionTo('log.read');
-    $role->givePermissionTo('log.create');
-    $role->givePermissionTo('log.update');
     $role->givePermissionTo('role.read');
     $role->givePermissionTo('role.create');
     $role->givePermissionTo('role.update');

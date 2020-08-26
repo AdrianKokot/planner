@@ -13,9 +13,9 @@ class TransferController extends Controller
   function __construct()
   {
     $this->middleware('permission:user_income.read|user_expense.read', ['only' => ['index', 'show']]);
-    $this->middleware('permission:user_income.read|user_expense.read', ['only' => ['store']]);
-    $this->middleware('permission:user_income.read|user_expense.read', ['only' => ['update']]);
-    $this->middleware('permission:user_income.read|user_expense.read', ['only' => ['destroy']]);
+    $this->middleware('permission:user_income.create|user_expense.create', ['only' => ['store']]);
+    $this->middleware('permission:user_income.update|user_expense.update', ['only' => ['update']]);
+    $this->middleware('permission:user_income.delete|user_expense.delete', ['only' => ['destroy']]);
   }
   /**
    * Display a listing of the resource.
@@ -30,17 +30,27 @@ class TransferController extends Controller
 
     $canAccess = $user->can('user_income.read') ? ($user->can('user_expense.read') ? true : ($transferType == 'income')) : ($user->can('user_expense.read') ? $transferType == 'expense' : false);
 
-    $transferTypeId = DB::table('transfer_types')->where('name', '=', $transferType);
-
     if ($canAccess) {
-
-      $transfers = [];
-
-      if ($transferType == 'both') {
-        $transfers = DB::table('transfers')->get();
-      } else {
-        $transfers = DB::table('transfers')->where('transfer_type_id', '=', DB::table('transfer_types')->where('name', '=', $transferType)->first()->name)->get();
-      }
+      $transfers = DB::table('transfers')
+                      ->join('transfer_categories', function($join) {
+                        $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
+                      })
+                      ->join('transfer_types', function($join) {
+                        $join->on('transfers.transfer_type_id', '=', 'transfer_types.id');
+                      })
+                      ->when($transferType != 'both', function($q) use($transferType) {
+                        return $q->where('transfer_types.name', '=', $transferType);
+                      })
+                      ->get([
+                        'transfers.name as name',
+                        'transfers.created_at as created_at',
+                        'transfers.amount as amount',
+                        'transfer_categories.name as transfer_category_name',
+                        'transfers.transfer_category_id as transfer_category_id',
+                        'transfer_types.name as transfer_type_name',
+                        'transfer_types.id as transfer_type_id',
+                        'transfer_categories.color as transfer_category_color'
+                      ]);
 
       return response($transfers);
     }

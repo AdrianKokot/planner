@@ -21,7 +21,7 @@ section {
     <section class="pb-5">
       <b-tabs content-class="mt-3" nav-wrapper-class="border-0" active-nav-item-class="border-bottom border-primary" no-nav-style>
         <b-tab title="Start">
-          <h4 class="text-center">Welcome to planner!</h4>
+          <h4 class="text-center">Welcome to the Planner!</h4>
           <p class="text-center">Click one of above tabs to navigate.</p>
         </b-tab>
         <b-tab title="Calendar" lazy v-if="$can('user_event.read')">
