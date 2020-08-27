@@ -45,7 +45,7 @@
         <span
           class="badge text-white text-capitalize"
           :style="{backgroundColor: data.value}"
-        >{{ data.value != 'primary' ? data.value.slice(6,-1) : 'default' }}</span>
+        >{{ data.value != 'var(--primary)' ? data.value.slice(6,-1) : 'default' }}</span>
       </template>
 
       <template v-slot:row-details="cat">
