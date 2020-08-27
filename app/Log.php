@@ -57,7 +57,7 @@ class Log extends Model
           }
 
           if ($value != $item->{$key}) {
-            $description = $description . '<div><strong>' . $key . '</strong> from <em>' . $item->{$key} . '</em> to <em>' . $value . '</em></div>';
+            $description = $description . '<div><strong>' . $key . '</strong>' . (!empty($item->{$key}) ? ' from <em>' . $item->{$key} . '</em>' : '') . ' to <em>' . $value . '</em></div>';
           }
 
         }

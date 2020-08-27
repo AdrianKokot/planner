@@ -57,6 +57,9 @@
         <b-form-invalid-feedback
           v-if="!$v.end.dateValidator"
         >End date and time is not valid date and time.</b-form-invalid-feedback>
+        <b-form-invalid-feedback
+          v-if="!$v.end.beforeStart"
+        >End date and time must be later than start date and time.</b-form-invalid-feedback>
       </b-form-group>
 
       <b-form-group label="Color" label-for="color-input">
@@ -235,6 +238,9 @@ export default {
     end: {
       required,
       dateValidator,
+      beforeStart: function() {
+        return this.start != null && this.end != null && this.end >= this.start;
+      }
     },
     description: {
       maxLength: maxLength(255),
