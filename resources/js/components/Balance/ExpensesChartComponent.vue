@@ -25,7 +25,7 @@ export default {
 
     const style = getComputedStyle(document.body);
 
-    trs = this.transactions.filter(x=>new Date(x.created_at).getFullYear() === new Date().getFullYear()).map(x => { return {category: x.transfer_category_name, color: x.transfer_category_color, data: x.amount, month: new Date(x.created_at).getMonth()} }).reduce((item, value) => {
+    trs = this.transactions.filter(x=>new Date(x.created_at).getFullYear() === new Date().getFullYear() && x.transfer_category_name != 'income').map(x => { return {category: x.transfer_category_name, color: x.transfer_category_color, data: x.amount, month: new Date(x.created_at).getMonth()} }).reduce((item, value) => {
 
       let idx = item.findIndex(x=>x.label == value.category);
 

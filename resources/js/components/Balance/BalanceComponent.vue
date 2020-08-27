@@ -44,6 +44,7 @@
       :current-page="currentPage"
       @row-clicked="showDetails"
       tbody-tr-class="text-truncate"
+      class="mb-0"
       sort-icon-left
     >
       <template
@@ -52,8 +53,7 @@
 
       <template v-slot:cell(amount)="data">
         <span :class="data.item.transfer_type_name == 'income' ? 'text-success' : 'text-danger'">
-          <span>{{ data.item.transfer_type_name == 'income' ? '+' : '-'}}</span>
-          {{ parseFloat(data.value).toLocaleString('pl') }} PLN
+          <span>{{ data.item.transfer_type_name == 'income' ? '+' : '-'}}</span>{{ parseFloat(data.value).toLocaleString('pl') }} PLN
         </span>
       </template>
 
@@ -104,11 +104,12 @@
         </div>
       </template>
     </b-table>
-    <div class="text-center">
-      <b-link variant="primary" @click="loadMore">Load more</b-link>
+    <div class="border-top text-center py-3" v-if="currBalance !=null">
+      <span class="mr-1 font-weight-bolder">Current balance: </span>
+      <span :class="{'text-danger': currBalance < 0, 'text-success': currBalance > 0}">{{ parseFloat(currBalance).toLocaleString('pl') }} PLN</span>
     </div>
     <h5 class="mt-5 text-center" v-if="loadedChartData && !loadingData">Last year expenses statistic</h5>
-    <balance-statistic-component v-if="loadedChartData && !loadingData" :transactions="balance" :categories="categories"></balance-statistic-component>
+    <expenses-chart-component v-if="loadedChartData && !loadingData" :transactions="balance" :categories="categories"></expenses-chart-component>
     <transaction-form-component
       :transaction="selectedTransaction"
       @createTransaction="createTransaction"
@@ -129,7 +130,9 @@ export default {
       loadingData: true,
       timePeriodOptions: [
         { value: 1, text: "last month" },
+        { value: 6, text: "last half year" },
         { value: 12, text: "last year" },
+        { value: 70, text: "last 5 years" },
       ],
       timePeriod: 12,
       fields: [
@@ -155,6 +158,7 @@ export default {
         },
       ],
       balance: [],
+      currBalance: null,
       perPage: 10,
       currentPage: 1,
       categories: [],
@@ -173,9 +177,11 @@ export default {
       this.selectedTransaction = null;
       this.$bvModal.show("transaction-form-modal");
     },
-    loadMore() {
-      this.timePeriod += 1;
-      this.onPeriodChange();
+    loadBalance() {
+      this.currBalance = null;
+      balanceDataService.getAll({only: 'balance'}).then(res => {
+        this.currBalance = res.data;
+      })
     },
     onPeriodChange() {
       this.loadingData = true;
@@ -206,6 +212,7 @@ export default {
             this.loadingData = true;
             balanceDataService.delete(id).then((response) => {
               if (response.data.id == id) {
+                this.loadBalance();
                 this.balance.splice(
                   this.balance.findIndex((x) => x.id == id),
                   1
@@ -226,7 +233,7 @@ export default {
         });
     },
     updateTransaction(transaction) {
-      console.log('UPDATE TRANSACTION', transaction);
+      this.loadBalance();
       this.balance.splice(
         this.balance.findIndex((x) => x.id == transaction.id),
         1,
@@ -234,6 +241,7 @@ export default {
       );
     },
     createTransaction(transaction) {
+      this.loadBalance();
       this.balance.push(transaction);
     },
   },
@@ -242,7 +250,8 @@ export default {
     transactionCategoryDataService.getAll().then(res => {
       this.categories = res.data;
       this.loadedChartData = true;
-    })
+    });
+    this.loadBalance();
   },
   computed: {
     rows() {

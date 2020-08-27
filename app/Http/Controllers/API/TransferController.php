@@ -29,7 +29,29 @@ class TransferController extends Controller
   {
     $start = $request->query('start') ?? null;
 
+    $balanceOnly = $request->query('only') == 'balance';
+
     $user = Auth::user();
+
+    if($balanceOnly) {
+      $data = DB::select("SELECT sum(balance) as 'balance'
+                          FROM (
+                            (SELECT sum(transfers.amount) as 'balance'
+                              FROM transfers
+                              JOIN transfer_types ON transfers.transfer_type_id = transfer_types.id
+                              WHERE transfers.user_id = ? AND transfer_types.name = 'income'
+                              GROUP BY transfer_types.name)
+                            UNION
+                            (SELECT sum(transfers.amount)*-1 as 'balance'
+                              FROM transfers
+                              JOIN transfer_types ON transfers.transfer_type_id = transfer_types.id
+                              WHERE transfers.user_id = ? AND transfer_types.name = 'expense'
+                              GROUP BY transfer_types.name)) as a
+                          ", [$user->id, $user->id])[0]->balance;
+
+      return response()->json([$data]);
+    }
+
 
     $transferType = $user->can('user_income.read')
                     ? ($user->can('user_expense.read') ? 'both' : 'income')
