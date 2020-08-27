@@ -33,13 +33,9 @@ class EventController extends Controller
     $events = [];
 
     if ($startTimestamp != null && $endTimestamp != null) {
-      $events = DB::table('events')
-        ->where('start', '>=', $startTimestamp)
-        ->where('end', '<=', $endTimestamp)
-        ->where('user_id', '=', $user->id)
-        ->get('*');
+      $events = Event::where('start', '>=', $startTimestamp)->where('end', '<=', $endTimestamp)->where('user_id', '=', $user->id)->with('expenses')->get();
     } else {
-      $events = DB::table('events')->get('*');
+      $events = Event::with('expenses')->get();
     }
 
     return response($events);

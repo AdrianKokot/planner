@@ -13,4 +13,8 @@ class Event extends Model
   {
     return $this->belongsTo('App\User');
   }
+
+  public function expenses() {
+    return $this->hasMany('App\Transfer');
+  }
 }

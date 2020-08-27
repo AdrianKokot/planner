@@ -33,7 +33,7 @@
         <li
           v-for="expense of expenses"
           :key="expense.id"
-        >{{ expense.name }} - {{ Number(expense.amount).toLocaleString() }} {{ expense.currency }}</li>
+        ><strong>{{ expense.name }}</strong> - {{ Number(expense.amount).toLocaleString() }} PLN</li>
       </ul>
     </div>
 
