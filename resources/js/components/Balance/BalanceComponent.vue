@@ -107,6 +107,8 @@
     <div class="text-center">
       <b-link variant="primary" @click="loadMore">Load more</b-link>
     </div>
+    <h5 class="mt-5 text-center" v-if="loadedChartData && !loadingData">Last year expenses statistic</h5>
+    <balance-statistic-component v-if="loadedChartData && !loadingData" :transactions="balance" :categories="categories"></balance-statistic-component>
     <transaction-form-component
       :transaction="selectedTransaction"
       @createTransaction="createTransaction"
@@ -118,17 +120,18 @@
 import { toastOptions, msgBoxOptions } from "../../services/toast-options";
 import balanceDataService from "../../services/balance-data-service";
 import DateTimeConverter from '../../services/date-time-converter';
+import transactionCategoryDataService from '../../services/transaction-category-data-service';
 
 export default {
   data() {
     return {
       selectedTransaction: null,
-      loadingData: false,
+      loadingData: true,
       timePeriodOptions: [
         { value: 1, text: "last month" },
         { value: 12, text: "last year" },
       ],
-      timePeriod: 1,
+      timePeriod: 12,
       fields: [
         {
           key: "created_at",
@@ -154,6 +157,8 @@ export default {
       balance: [],
       perPage: 10,
       currentPage: 1,
+      categories: [],
+      loadedChartData: false
     };
   },
   methods: {
@@ -169,7 +174,7 @@ export default {
       this.$bvModal.show("transaction-form-modal");
     },
     loadMore() {
-      this.timePerdiod += 1;
+      this.timePeriod += 1;
       this.onPeriodChange();
     },
     onPeriodChange() {
@@ -234,6 +239,10 @@ export default {
   },
   mounted: function () {
     this.onPeriodChange();
+    transactionCategoryDataService.getAll().then(res => {
+      this.categories = res.data;
+      this.loadedChartData = true;
+    })
   },
   computed: {
     rows() {
