@@ -96,7 +96,7 @@ class TransferController extends Controller
       $validatedData['user_id'] = $user->id;
 
       if ($transferType == 'income') {
-        $validatedData['transfer_category_id'] = DB::table('transfer_categories')->where('name', '=', 'salary')->first()->id;
+        $validatedData['transfer_category_id'] = DB::table('transfer_categories')->where('name', '=', 'income')->first()->id;
       }
 
       $transfer = Transfer::create($validatedData);
@@ -182,7 +182,7 @@ class TransferController extends Controller
       if (($transferType == 'income' && $user->can('user_income.update')) || ($transferType == 'expense' && $user->can('user_expense.update'))) {
 
         if ($transferType == 'income') {
-          $validatedData['transfer_category_id'] = DB::table('transfer_categories')->where('name', '=', 'salary')->first()->id;
+          $validatedData['transfer_category_id'] = DB::table('transfer_categories')->where('name', '=', 'income')->first()->id;
         }
 
         $oldTransfer = clone $transfer;
