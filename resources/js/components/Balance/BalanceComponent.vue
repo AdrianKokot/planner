@@ -48,7 +48,7 @@
     >
       <template
         v-slot:cell(created_at)="data"
-      >{{ (new Date(data.value)).toLocaleString('pl', {day: '2-digit', month: '2-digit', year:'numeric'}) }}</template>
+      >{{ dateString(data.value) }}</template>
 
       <template v-slot:cell(amount)="data">
         <span :class="data.item.transfer_type_name == 'income' ? 'text-success' : 'text-danger'">
@@ -71,20 +71,53 @@
       </template>
 
       <template v-slot:row-details="transaction">
-        <pre>
-          {{transaction.item}}
-        </pre>
+        <div>
+          <div class="py-2 px-3">
+            <div class="font-weight-bolder">Date</div>
+            <div>{{ dateString(transaction.item.created_at) }}</div>
+          </div>
+          <div class="py-2 px-3">
+            <div class="font-weight-bolder">Name</div>
+            <div>{{ transaction.item.name }}</div>
+          </div>
+          <div class="py-2 px-3">
+            <div class="font-weight-bolder">Amount</div>
+            <div>{{ parseFloat(transaction.item.amount).toLocaleString('pl') }} PLN</div>
+          </div>
+          <div class="py-2 px-3" v-if="transaction.item.event_title != null">
+            <div class="font-weight-bolder">Connected Event</div>
+            <div><strong>{{ transaction.item.event_title }}</strong></div>
+          </div>
+        </div>
+        <div class="d-flex justify-content-end">
+          <b-button
+            variant="outline-info"
+            class="mr-2"
+            @click="showEditForm(transaction.item)"
+            v-if="transaction.item.transaction_category_name == 'income' ? canUpdateIncome : canUpdateExpense"
+          >Edit</b-button>
+          <b-button
+            variant="outline-danger"
+            @click="deleteTransaction(transaction.item.id)"
+            v-if="transaction.item.transaction_category_name == 'income' ? canDeleteIncome : canDeleteExpense"
+          >Delete</b-button>
+        </div>
       </template>
     </b-table>
     <div class="text-center">
       <b-link variant="primary" @click="loadMore">Load more</b-link>
     </div>
-    <transaction-form-component :transaction="selectedTransaction" @createTransaction="createTransaction" @updateTransaction="updateTransaction"></transaction-form-component>
+    <transaction-form-component
+      :transaction="selectedTransaction"
+      @createTransaction="createTransaction"
+      @updateTransaction="updateTransaction"
+    ></transaction-form-component>
   </div>
 </template>
 <script>
-import { toastOptions } from "../../services/toast-options";
+import { toastOptions, msgBoxOptions } from "../../services/toast-options";
 import balanceDataService from "../../services/balance-data-service";
+import DateTimeConverter from '../../services/date-time-converter';
 
 export default {
   data() {
@@ -124,6 +157,9 @@ export default {
     };
   },
   methods: {
+    dateString(date) {
+      return DateTimeConverter.convertToDateString(date);
+    },
     showEditForm(transaction) {
       this.selectedTransaction = transaction;
       this.$bvModal.show("transaction-form-modal");
@@ -155,24 +191,37 @@ export default {
       row._showDetails = !row._showDetails;
     },
     deleteTransaction(id) {
-      this.loadingData = true;
-      balanceDataService.delete(id).then((response) => {
-        if (response.data.id == id) {
-          this.balance.splice(
-            this.balance.findIndex((x) => x.id == id),
-            1
-          );
-          this.$bvToast.toast(
-            "Transaction was deleted successfully!",
-            toastOptions()
-          );
-        } else {
-          this.$bvToast.toast("Something went wrong", toastOptions("danger"));
-        }
-        this.loadingData = false;
-      });
+      this.$bvModal
+        .msgBoxConfirm(
+          "Are you sure you want to delete this transaction?",
+          msgBoxOptions()
+        )
+        .then((value) => {
+          if (value == true) {
+            this.loadingData = true;
+            balanceDataService.delete(id).then((response) => {
+              if (response.data.id == id) {
+                this.balance.splice(
+                  this.balance.findIndex((x) => x.id == id),
+                  1
+                );
+                this.$bvToast.toast(
+                  "Transaction was deleted successfully!",
+                  toastOptions()
+                );
+              } else {
+                this.$bvToast.toast(
+                  "Something went wrong",
+                  toastOptions("danger")
+                );
+              }
+              this.loadingData = false;
+            });
+          }
+        });
     },
     updateTransaction(transaction) {
+      console.log('UPDATE TRANSACTION', transaction);
       this.balance.splice(
         this.balance.findIndex((x) => x.id == transaction.id),
         1,

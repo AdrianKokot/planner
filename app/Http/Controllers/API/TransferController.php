@@ -36,6 +36,9 @@ class TransferController extends Controller
                     : ($user->can('user_expense.read') ? 'expense' : 'none');
 
     $transfers = DB::table('transfers')
+                    ->leftJoin('events', function($join) {
+                      $join->on('events.id', '=', 'transfers.event_id');
+                    })
                     ->join('transfer_categories', function ($join) {
                       $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
                     })
@@ -51,6 +54,7 @@ class TransferController extends Controller
                     })
                     ->orderBy('created_at', 'DESC')
                     ->get([
+                      'transfers.id as id',
                       'transfers.name as name',
                       'transfers.created_at as created_at',
                       'transfers.amount as amount',
@@ -58,7 +62,9 @@ class TransferController extends Controller
                       'transfers.transfer_category_id as transfer_category_id',
                       'transfer_types.name as transfer_type_name',
                       'transfer_types.id as transfer_type_id',
-                      'transfer_categories.color as transfer_category_color'
+                      'transfer_categories.color as transfer_category_color',
+                      'events.id as event_id',
+                      'events.title as event_title'
                     ]);
 
     return response($transfers);
@@ -99,6 +105,9 @@ class TransferController extends Controller
         Log::log($user, $transfer, 'transaction', 'create', $validatedData);
 
         $transferData = DB::table('transfers')
+                            ->leftJoin('events', function($join) {
+                              $join->on('events.id', '=', 'transfers.event_id');
+                            })
                             ->join('transfer_categories', function ($join) {
                               $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
                             })
@@ -107,6 +116,7 @@ class TransferController extends Controller
                             })
                             ->where('transfers.id', '=', $transfer->id)
                             ->first([
+                              'transfers.id as id',
                               'transfers.name as name',
                               'transfers.created_at as created_at',
                               'transfers.amount as amount',
@@ -114,7 +124,9 @@ class TransferController extends Controller
                               'transfers.transfer_category_id as transfer_category_id',
                               'transfer_types.name as transfer_type_name',
                               'transfer_types.id as transfer_type_id',
-                              'transfer_categories.color as transfer_category_color'
+                              'transfer_categories.color as transfer_category_color',
+                              'events.id as event_id',
+                              'events.title as event_title'
                             ]);
 
         return response()->json($transferData);
@@ -165,15 +177,44 @@ class TransferController extends Controller
 
     if ($transfer->user_id == $user->id) {
 
-      $transferType = DB::table('transfer_types')->where('id', '=', $validatedData['transfer_type_id']);
+      $transferType = DB::table('transfer_types')->where('id', '=', $validatedData['transfer_type_id'])->first()->name;
 
       if (($transferType == 'income' && $user->can('user_income.update')) || ($transferType == 'expense' && $user->can('user_expense.update'))) {
+
+        if ($transferType == 'income') {
+          $validatedData['transfer_category_id'] = DB::table('transfer_categories')->where('name', '=', 'salary')->first()->id;
+        }
 
         $oldTransfer = clone $transfer;
 
         if ($transfer->update($validatedData)) {
           Log::log($user, $oldTransfer, 'transaction', 'update', $validatedData);
-          return response($transfer);
+          $transferData = DB::table('transfers')
+                            ->leftJoin('events', function($join) {
+                              $join->on('events.id', '=', 'transfers.event_id');
+                            })
+                            ->join('transfer_categories', function ($join) {
+                              $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
+                            })
+                            ->join('transfer_types', function ($join) {
+                              $join->on('transfers.transfer_type_id', '=', 'transfer_types.id');
+                            })
+                            ->where('transfers.id', '=', $transfer->id)
+                            ->first([
+                              'transfers.id as id',
+                              'transfers.name as name',
+                              'transfers.created_at as created_at',
+                              'transfers.amount as amount',
+                              'transfer_categories.name as transfer_category_name',
+                              'transfers.transfer_category_id as transfer_category_id',
+                              'transfer_types.name as transfer_type_name',
+                              'transfer_types.id as transfer_type_id',
+                              'transfer_categories.color as transfer_category_color',
+                              'events.id as event_id',
+                              'events.title as event_title'
+                            ]);
+
+          return response()->json($transferData);
         }
 
         return response(['message' => 'Something went wrong.', 500]);

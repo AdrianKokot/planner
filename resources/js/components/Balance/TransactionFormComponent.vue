@@ -144,6 +144,11 @@ export default {
         if (this.transaction != null) {
           this.isCreateForm = false;
           this.name = this.transaction.name;
+          this.type = this.transaction.transfer_type_id;
+          this.category = this.transaction.transfer_category_id;
+          this.amount = this.transaction.amount;
+          this.date = this.transaction.created_at.split(' ')[0];
+          this.event = this.transaction.event_id;
         } else {
           this.isCreateForm = true;
           this.onHide();
@@ -200,8 +205,8 @@ export default {
           });
         } else {
           balanceDataService.update(body.id, body).then((response) => {
-            if (response.data.id == this.balanceDataService.id) {
-              this.$emit("updateTransaction", body);
+            if (response.data.id == this.transaction.id) {
+              this.$emit("updateTransaction", response.data);
               this.$bvModal.hide("transaction-form-modal");
               this.$bvToast.toast(
                 "Transaction was updated successfully!",
