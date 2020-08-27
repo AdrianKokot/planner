@@ -65,8 +65,6 @@ class PermissionsAndRolesSeeder extends Seeder
     $role->givePermissionTo('user_expense.create');
     $role->givePermissionTo('user_expense.update');
     $role->givePermissionTo('user_expense.delete');
-    $role->givePermissionTo('transfer_type.read');
-    $role->givePermissionTo('transfer_category.read');
 
     $user = Factory(App\User::class)->create([
       'name' => 'Example User',

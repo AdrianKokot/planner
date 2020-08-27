@@ -159,12 +159,12 @@ export default {
       }, 10);
     },
     onHide: function () {
-      this.isCreateForm = false;
+      this.isCreateForm = true;
       this.title = "";
       this.start = DateTimeConverter.convertToDateTimeString(new Date());
       this.end = DateTimeConverter.convertToDateTimeString(new Date());
       this.description = "";
-      this.color = "default";
+      this.color = "primary";
       this.$v.$reset();
     },
     submit: function () {

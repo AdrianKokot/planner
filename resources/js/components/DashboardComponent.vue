@@ -39,6 +39,9 @@ section {
         <b-tab title="Roles" lazy v-if="$can('role.read')">
           <roles-component></roles-component>
         </b-tab>
+        <b-tab title="Transaction categories" lazy v-if="$can('transfer_category.read')">
+          <transaction-categories-component></transaction-categories-component>
+        </b-tab>
       </b-tabs>
     </section>
   </div>
