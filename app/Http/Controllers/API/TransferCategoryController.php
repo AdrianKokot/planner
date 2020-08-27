@@ -26,7 +26,7 @@ class TransferCategoryController extends Controller
    */
   public function index()
   {
-    return response(DB::table('transfer_categories')->all());
+    return response(DB::table('transfer_categories')->get());
   }
 
   /**

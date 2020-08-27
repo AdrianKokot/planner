@@ -48,7 +48,7 @@
     >
       <template
         v-slot:cell(created_at)="data"
-      >{{ (new Date(data.value)).toLocaleString('pl', {day: '2-digit', month: '2-digit', year:'numeric', hour: '2-digit', minute:'2-digit'}) }}</template>
+      >{{ (new Date(data.value)).toLocaleString('pl', {day: '2-digit', month: '2-digit', year:'numeric'}) }}</template>
 
       <template v-slot:cell(amount)="data">
         <span :class="data.item.transfer_type_name == 'income' ? 'text-success' : 'text-danger'">
@@ -79,15 +79,17 @@
     <div class="text-center">
       <b-link variant="primary" @click="loadMore">Load more</b-link>
     </div>
+    <transaction-form-component :transaction="selectedTransaction" @createTransaction="createTransaction" @updateTransaction="updateTransaction"></transaction-form-component>
   </div>
 </template>
 <script>
 import { toastOptions } from "../../services/toast-options";
-import balanceDataService from "../../services/balance-service";
+import balanceDataService from "../../services/balance-data-service";
 
 export default {
   data() {
     return {
+      selectedTransaction: null,
       loadingData: false,
       timePeriodOptions: [
         { value: 1, text: "last month" },
@@ -122,6 +124,14 @@ export default {
     };
   },
   methods: {
+    showEditForm(transaction) {
+      this.selectedTransaction = transaction;
+      this.$bvModal.show("transaction-form-modal");
+    },
+    showCreateForm() {
+      this.selectedTransaction = null;
+      this.$bvModal.show("transaction-form-modal");
+    },
     loadMore() {
       this.timePerdiod += 1;
       this.onPeriodChange();
@@ -144,7 +154,7 @@ export default {
     showDetails(row) {
       row._showDetails = !row._showDetails;
     },
-    destroy(id) {
+    deleteTransaction(id) {
       this.loadingData = true;
       balanceDataService.delete(id).then((response) => {
         if (response.data.id == id) {

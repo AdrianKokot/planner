@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
+use App\TransferType;
 use Illuminate\Support\Facades\Auth;
 
 class TransferController extends Controller
@@ -26,45 +27,41 @@ class TransferController extends Controller
    */
   public function index(Request $request)
   {
-    $transferType = $request->query('type') ?? 'both';
-
     $start = $request->query('start') ?? null;
 
     $user = Auth::user();
 
-    $canAccess = $user->can('user_income.read') ? ($user->can('user_expense.read') ? true : ($transferType == 'income')) : ($user->can('user_expense.read') ? $transferType == 'expense' : false);
+    $transferType = $user->can('user_income.read')
+                    ? ($user->can('user_expense.read') ? 'both' : 'income')
+                    : ($user->can('user_expense.read') ? 'expense' : 'none');
 
-    if ($canAccess) {
-      $transfers = DB::table('transfers')
-        ->join('transfer_categories', function ($join) {
-          $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
-        })
-        ->join('transfer_types', function ($join) {
-          $join->on('transfers.transfer_type_id', '=', 'transfer_types.id');
-        })
-        ->when($transferType != 'both', function ($q) use ($transferType) {
-          return $q->where('transfer_types.name', '=', $transferType);
-        })
-        ->where('transfers.user_id', '=', $user->id)
-        ->when($start != null, function($q) use ($start) {
-          return $q->where('created_at', '>=', Carbon::parse($start));
-        })
-        ->orderBy('created_at', 'DESC')
-        ->get([
-          'transfers.name as name',
-          'transfers.created_at as created_at',
-          'transfers.amount as amount',
-          'transfer_categories.name as transfer_category_name',
-          'transfers.transfer_category_id as transfer_category_id',
-          'transfer_types.name as transfer_type_name',
-          'transfer_types.id as transfer_type_id',
-          'transfer_categories.color as transfer_category_color'
-        ]);
+    $transfers = DB::table('transfers')
+                    ->join('transfer_categories', function ($join) {
+                      $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
+                    })
+                    ->join('transfer_types', function ($join) {
+                      $join->on('transfers.transfer_type_id', '=', 'transfer_types.id');
+                    })
+                    ->when($transferType != 'both', function ($q) use ($transferType) {
+                      return $q->where('transfer_types.name', '=', $transferType);
+                    })
+                    ->where('transfers.user_id', '=', $user->id)
+                    ->when($start != null, function ($q) use ($start) {
+                      return $q->where('created_at', '>=', Carbon::parse($start));
+                    })
+                    ->orderBy('created_at', 'DESC')
+                    ->get([
+                      'transfers.name as name',
+                      'transfers.created_at as created_at',
+                      'transfers.amount as amount',
+                      'transfer_categories.name as transfer_category_name',
+                      'transfers.transfer_category_id as transfer_category_id',
+                      'transfer_types.name as transfer_type_name',
+                      'transfer_types.id as transfer_type_id',
+                      'transfer_categories.color as transfer_category_color'
+                    ]);
 
-      return response($transfers);
-    }
-
-    abort(403, 'Forbidden');
+    return response($transfers);
   }
 
   /**
@@ -86,17 +83,41 @@ class TransferController extends Controller
       'event_id' => 'nullable|numeric|exists:events,id'
     ]);
 
-    $transferType = DB::table('transfer_types')->where('id', '=', $validatedData['transfer_type_id']);
+    $transferType = DB::table('transfer_types')->where('id', '=', $validatedData['transfer_type_id'])->first()->name;
 
     if (($transferType == 'income' && $user->can('user_income.create')) || ($transferType == 'expense' && $user->can('user_expense.create'))) {
 
       $validatedData['user_id'] = $user->id;
 
+      if ($transferType == 'income') {
+        $validatedData['transfer_category_id'] = DB::table('transfer_categories')->where('name', '=', 'salary')->first()->id;
+      }
+
       $transfer = Transfer::create($validatedData);
 
       if ($transfer != null) {
         Log::log($user, $transfer, 'transaction', 'create', $validatedData);
-        return response($transfer);
+
+        $transferData = DB::table('transfers')
+                            ->join('transfer_categories', function ($join) {
+                              $join->on('transfers.transfer_category_id', '=', 'transfer_categories.id');
+                            })
+                            ->join('transfer_types', function ($join) {
+                              $join->on('transfers.transfer_type_id', '=', 'transfer_types.id');
+                            })
+                            ->where('transfers.id', '=', $transfer->id)
+                            ->first([
+                              'transfers.name as name',
+                              'transfers.created_at as created_at',
+                              'transfers.amount as amount',
+                              'transfer_categories.name as transfer_category_name',
+                              'transfers.transfer_category_id as transfer_category_id',
+                              'transfer_types.name as transfer_type_name',
+                              'transfer_types.id as transfer_type_id',
+                              'transfer_categories.color as transfer_category_color'
+                            ]);
+
+        return response()->json($transferData);
       }
 
       return response(['message' => 'Something went wrong.', 500]);

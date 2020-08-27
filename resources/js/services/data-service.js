@@ -16,6 +16,17 @@ function handle401() {
   );
   // app.$store.dispatch('logout');
 }
+
+function handleError(error) {
+  if (error.response.status == 403) {
+    handle403();
+  } else if(error.response.status == 401) {
+    handle401();
+  } else {
+    console.log(error.response);
+    return error.response;
+  }
+}
 class DataService {
   constructor(url) {
     this.url = url;
@@ -53,15 +64,7 @@ class DataService {
    */
   getAll(options = {}) {
     const params = this.renderParamsFromOptions(options);
-    return http.get(this.url + params).catch(error => {
-      if (error.response.status == 403) {
-        handle403();
-      } else if(error.response.status == 401) {
-        handle401();
-      } else {
-        return error.response;
-      }
-    });
+    return http.get(this.url + params).catch(handleError);
   }
 
   /**
@@ -72,15 +75,7 @@ class DataService {
    * @memberof DataService
    */
   get(id) {
-    return http.get(`${this.url}/${id}`).catch(error => {
-      if (error.response.status == 403) {
-        handle403();
-      } else if(error.response.status == 401) {
-        handle401();
-      } else {
-        return error.response;
-      }
-    });
+    return http.get(`${this.url}/${id}`).catch(handleError);
   }
 
   /**
@@ -91,15 +86,7 @@ class DataService {
    * @memberof DataService
    */
   create(data) {
-    return http.post(this.url, data).catch(error => {
-      if (error.response.status == 403) {
-        handle403();
-      } else if(error.response.status == 401) {
-        handle401();
-      } else {
-        return error.response;
-      }
-    });
+    return http.post(this.url, data).catch(handleError);
   }
 
   /**
@@ -111,15 +98,7 @@ class DataService {
    * @memberof DataService
    */
   update(id, data) {
-    return http.put(`${this.url}/${id}`, data).catch(error => {
-      if (error.response.status == 403) {
-        handle403();
-      } else if(error.response.status == 401) {
-        handle401();
-      } else {
-        return error.response;
-      }
-    });
+    return http.put(`${this.url}/${id}`, data).catch(handleError);
   }
 
   /**
@@ -130,15 +109,7 @@ class DataService {
    * @memberof DataService
    */
   delete(id) {
-    return http.delete(`${this.url}/${id}`).catch(error => {
-      if (error.response.status == 403) {
-        handle403();
-      } else if(error.response.status == 401) {
-        handle401();
-      } else {
-        return error.response;
-      }
-    });
+    return http.delete(`${this.url}/${id}`).catch(handleError);
   }
 }
 
