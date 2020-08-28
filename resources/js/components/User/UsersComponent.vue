@@ -154,7 +154,6 @@ export default {
   mounted: function () {
     this.loadingData = true;
     userDataService.getAll().then((response) => {
-      console.log(response.data);
       this.users = response.data;
       this.loadingData = false;
     });

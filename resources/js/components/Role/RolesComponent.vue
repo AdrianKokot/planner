@@ -135,7 +135,6 @@ export default {
   mounted: function () {
     this.loadingData = true;
     roleDataService.getAll().then((response) => {
-      console.log(response.data);
       this.roles = response.data;
       this.loadingData = false;
     });

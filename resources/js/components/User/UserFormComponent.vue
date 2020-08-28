@@ -146,7 +146,6 @@ export default {
           this.onHide();
         }
         this.showOverlay = false;
-        console.log('isCreateForm:', this.isCreateForm);
       }, 10);
     },
     onHide: function () {

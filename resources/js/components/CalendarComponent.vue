@@ -58,7 +58,6 @@ export default {
         eventSources: [
           function (fetchInfo, successCallback, failureCallback) {
             eventDataService.getAll({start: fetchInfo.startStr, end: fetchInfo.endStr}).then((response) => {
-              console.log(response);
               successCallback(response.data);
             });
           },

@@ -181,8 +181,6 @@ export default {
           transfer_category_id: this.category,
         };
 
-        console.log(body);
-
         this.showOverlay = true;
         if (this.isCreateForm) {
           balanceDataService.create(body).then((response) => {
@@ -248,15 +246,12 @@ export default {
   },
   mounted: function () {
     eventDataService.getAll().then((res) => {
-      console.log("events", res);
       this.events = res.data;
     });
     transactionCategoryDataService.getAll().then((res) => {
-      console.log("catego", res);
       this.categories = res.data;
     });
     transactionTypeDataService.getAll().then((res) => {
-      console.log("types ", res);
       this.types = res.data;
     });
   },

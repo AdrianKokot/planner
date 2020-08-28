@@ -99,15 +99,12 @@ export default {
           name: this.name,
           color: `var(--${this.color})`,
         };
-        console.log('body', body);
 
         this.showOverlay = true;
         if (this.isCreateForm) {
           transactionCategoryDataService.create(body).then((response) => {
-            console.log(response);
             if (response.data.id != null) {
               this.$emit("createCategory", response.data);
-              console.log(response.data);
               this.$bvModal.hide("transaction-category-form-modal");
 
               this.$bvToast.toast(

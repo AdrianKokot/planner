@@ -193,7 +193,6 @@ export default {
           ).toISOString(),
         })
         .then((response) => {
-          console.log(response.data);
           this.balance = response.data;
           this.loadingData = false;
         });

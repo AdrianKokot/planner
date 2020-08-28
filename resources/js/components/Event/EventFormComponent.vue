@@ -190,7 +190,6 @@ export default {
           eventDataService.create(body).then((response) => {
             if (response.data.id != null) {
               this.$emit("createEvent", response.data);
-              console.log(response.data);
               this.$bvModal.hide("event-form-modal");
 
               this.$bvToast.toast(

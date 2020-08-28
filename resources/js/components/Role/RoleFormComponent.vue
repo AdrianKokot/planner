@@ -113,19 +113,16 @@ export default {
     onSubmit: function () {
       this.$v.$touch();
       if (!this.$v.$invalid) {
-        console.log(this.role);
         const body = {
           id: this.isCreateForm ? null : this.role.id,
           name: this.name,
           permissions: this.checkedPermissions,
         };
 
-        console.log(body);
 
         this.showOverlay = true;
         if (this.isCreateForm) {
           roleDataService.create(body).then((response) => {
-            console.log(response);
             if (response.data.id != null) {
               this.$emit("createRole", response.data);
 
@@ -145,7 +142,6 @@ export default {
           });
         } else {
           roleDataService.update(body.id, body).then((response) => {
-            console.log(response);
             if (response.data.id == this.role.id) {
               this.$emit("updateRole", body);
               this.$bvModal.hide("role-form-modal");
@@ -170,7 +166,6 @@ export default {
       this.permissions = _.groupBy(response.data, function(perm) {
           return perm.split('.')[0]
         });
-      console.log('permissions', this.permissions);
     });
   },
 };
