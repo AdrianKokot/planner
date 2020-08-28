@@ -8,7 +8,7 @@ Trello board [here](https://trello.com/b/TIhWNcfD/bbraunplanner)
   - Configure database connection in .env
   - Run ```php artisan key:generate```
   - Run ```php artisan migrate:fresh --seed --seeder=PermissionsAndRolesSeeder```
-  - Run ```php artisan serve --port 80``
+  - Run ```php artisan serve --port 80```
   - Enter ```http://localhost```
 
 ## Default users
